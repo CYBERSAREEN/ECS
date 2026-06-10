@@ -54,7 +54,10 @@ app.use('/api', cors({
 // ── Compression + template locals (SEO/GA) ────────────────────
 app.use(compression());
 app.use((req, res, next) => {
-  res.locals.siteUrl = (process.env.SITE_URL || `http://localhost:${PORT}`).replace(/\/$/, '');
+  const defaultUrl = process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : `http://localhost:${PORT}`;
+  res.locals.siteUrl = (process.env.SITE_URL || defaultUrl).replace(/\/$/, '');
   res.locals.pagePath = req.path === '/' ? '/' : req.path.replace(/\/$/, '');
   res.locals.gaId = process.env.GA_MEASUREMENT_ID || '';
   res.locals.robotsMeta = req.path.startsWith('/vadmin') ? 'noindex, nofollow' : '';
