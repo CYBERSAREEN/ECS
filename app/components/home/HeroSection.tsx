@@ -78,7 +78,7 @@ export default function HeroSection() {
         <svg width="100%" height="100%">
           <defs>
             <pattern id="hero-grid" width="56" height="56" patternUnits="userSpaceOnUse">
-              <path d="M 56 0 L 0 0 0 56" fill="none" stroke="#e5e5e5" strokeWidth="0.5" />
+              <circle cx="2" cy="2" r="1.5" fill="#ef233c" opacity="0.4" />
             </pattern>
           </defs>
           <rect width="100%" height="100%" fill="url(#hero-grid)" opacity="0.04" />
@@ -90,7 +90,7 @@ export default function HeroSection() {
 
       {/* Radial vignette at bottom */}
       <div className="absolute inset-x-0 bottom-0 h-64 pointer-events-none"
-           style={{ background: "linear-gradient(to top, #000000, transparent)" }} />
+           style={{ background: "linear-gradient(to top, #0a0a0a, transparent)" }} />
 
       <div className="relative max-w-4xl mx-auto px-4 sm:px-6 w-full py-16 text-center">
 
@@ -115,7 +115,7 @@ export default function HeroSection() {
                 style={{
                   top: "50%", left: "50%",
                   transform: `rotate(${deg}deg) translateX(99px) translateY(-3px)`,
-                  boxShadow: "0 0 8px rgba(252,163,17,0.8)",
+                  boxShadow: "0 0 8px rgba(239,35,60,0.8)",
                 }}
               />
             ))}
@@ -129,7 +129,7 @@ export default function HeroSection() {
           />
           {/* Glow */}
           <div className="absolute rounded-full"
-               style={{ width: 180, height: 180, background: "radial-gradient(circle, rgba(252,163,17,0.18) 0%, transparent 70%)" }} />
+               style={{ width: 180, height: 180, background: "radial-gradient(circle, rgba(239,35,60,0.18) 0%, transparent 70%)" }} />
           {/* Logo */}
           <motion.div
             animate={{ y: [0, -10, 0] }}
@@ -142,7 +142,7 @@ export default function HeroSection() {
               width={120}
               height={120}
               priority
-              className="drop-shadow-[0_0_30px_rgba(252,163,17,0.35)] select-none"
+              className="drop-shadow-[0_0_30px_rgba(239,35,60,0.35)] select-none"
             />
           </motion.div>
         </motion.div>
@@ -167,7 +167,7 @@ export default function HeroSection() {
           style={{ fontSize: "clamp(2.25rem, 6vw, 4.5rem)" }}
         >
           EXCELON CYBER
-          <span className="block text-gradient drop-shadow-[0_0_20px_rgba(252,163,17,0.3)]">
+          <span className="block text-gradient drop-shadow-[0_0_20px_rgba(239,35,60,0.3)]">
             SOLUTIONS
           </span>
         </motion.h1>
@@ -202,7 +202,7 @@ export default function HeroSection() {
         >
           <Link
             href="/services"
-            className="group inline-flex items-center gap-2 bg-accent text-black font-bold px-7 py-3.5 rounded-xl hover:shadow-[0_0_28px_rgba(252,163,17,0.45)] transition-all duration-300"
+            className="group inline-flex items-center gap-2 bg-accent text-white font-bold px-7 py-3.5 rounded-xl hover:shadow-[0_0_28px_rgba(239,35,60,0.45)] transition-all duration-300"
           >
             Explore Our Services
             <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />

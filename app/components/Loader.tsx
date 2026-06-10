@@ -31,14 +31,14 @@ export default function Loader() {
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.5, ease: "easeInOut" }}
-          className="fixed inset-0 z-[9999] bg-black flex flex-col items-center justify-center"
+          className="fixed inset-0 z-[9999] bg-[#0a0a0a] flex flex-col items-center justify-center"
         >
           {/* Subtle grid */}
           <div className="absolute inset-0 pointer-events-none opacity-[0.06]">
             <svg width="100%" height="100%">
               <defs>
                 <pattern id="lg" width="40" height="40" patternUnits="userSpaceOnUse">
-                  <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#fca311" strokeWidth="1" />
+                  <circle cx="2" cy="2" r="1.5" fill="#ef233c" opacity="0.4" />
                 </pattern>
               </defs>
               <rect width="100%" height="100%" fill="url(#lg)" />
@@ -49,7 +49,7 @@ export default function Loader() {
           <div className="relative flex items-center justify-center">
             <motion.div
               className="absolute rounded-full"
-              style={{ width: 160, height: 160, background: "radial-gradient(circle, rgba(252,163,17,0.18) 0%, transparent 70%)" }}
+              style={{ width: 160, height: 160, background: "radial-gradient(circle, rgba(239,35,60,0.18) 0%, transparent 70%)" }}
               animate={{ scale: [1, 1.25, 1], opacity: [0.6, 1, 0.6] }}
               transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
             />
@@ -64,7 +64,7 @@ export default function Loader() {
                 width={80}
                 height={80}
                 priority
-                className="relative drop-shadow-[0_0_24px_rgba(252,163,17,0.5)]"
+                className="relative drop-shadow-[0_0_24px_rgba(239,35,60,0.5)]"
               />
             </motion.div>
           </div>

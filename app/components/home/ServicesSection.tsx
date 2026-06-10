@@ -47,7 +47,7 @@ function ServiceCard({ s, i, inView }: { s: typeof SERVICES[0]; i: number; inVie
       initial={{ opacity: 0, y: 40 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.5, delay: i * 0.1 }}
-      className="bg-white/[0.03] border border-white/10 rounded-2xl overflow-hidden hover:border-accent/40 hover:shadow-[0_0_28px_rgba(252,163,17,0.1)] transition-all duration-300"
+      className="bg-white/[0.03] border border-white/10 rounded-2xl overflow-hidden hover:border-accent/40 hover:shadow-[0_0_28px_rgba(239,35,60,0.1)] transition-all duration-300"
     >
       <button
         className="w-full text-left p-7 flex items-start gap-5"

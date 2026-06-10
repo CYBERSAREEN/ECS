@@ -383,7 +383,7 @@ export default function AdminDashboard() {
       </aside>
 
       {/* Mobile sidebar overlay */}
-      {sidebarOpen && <div className="fixed inset-0 z-30 bg-black/50 md:hidden" onClick={() => setSidebarOpen(false)} />}
+      {sidebarOpen && <div className="fixed inset-0 z-30 bg-[#0a0a0a]/50 md:hidden" onClick={() => setSidebarOpen(false)} />}
 
       {/* Main */}
       <div className="flex-1 flex flex-col min-w-0">

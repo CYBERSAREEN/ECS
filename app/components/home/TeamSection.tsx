@@ -59,7 +59,7 @@ export default function TeamSection() {
               initial={{ opacity: 0, y: 40 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: i * 0.12 }}
-              className="group bg-white/[0.03] border border-white/10 rounded-2xl p-8 text-center hover:border-accent/40 hover:bg-white/[0.05] hover:shadow-[0_0_28px_rgba(252,163,17,0.1)] transition-all duration-300"
+              className="group bg-white/[0.03] border border-white/10 rounded-2xl p-8 text-center hover:border-accent/40 hover:bg-white/[0.05] hover:shadow-[0_0_28px_rgba(239,35,60,0.1)] transition-all duration-300"
             >
               <div className="mx-auto mb-6 relative w-fit">
                 <div className="absolute inset-0 rounded-full bg-accent/20 blur-xl scale-110 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

@@ -40,7 +40,7 @@ export default function AboutPage() {
               <div
                 className="absolute w-80 h-80 rounded-full pointer-events-none"
                 style={{
-                  background: "radial-gradient(circle, rgba(252,163,17,0.12) 0%, transparent 70%)",
+                  background: "radial-gradient(circle, rgba(239,35,60,0.12) 0%, transparent 70%)",
                   filter: "blur(50px)",
                 }}
               />
@@ -250,7 +250,7 @@ export default function AboutPage() {
                       </div>
                     ) : <div className="hidden md:block" />}
                   </div>
-                  <div className="absolute left-4 md:left-1/2 w-3 h-3 rounded-full bg-accent -translate-x-1/2 top-6 shadow-[0_0_10px_rgba(252,163,17,0.6)]" />
+                  <div className="absolute left-4 md:left-1/2 w-3 h-3 rounded-full bg-accent -translate-x-1/2 top-6 shadow-[0_0_10px_rgba(239,35,60,0.6)]" />
                   <div className="flex-1">
                     {i % 2 !== 0 ? (
                       <div className="bg-white/[0.03] border border-white/10 rounded-xl p-5 ml-10 md:ml-4 hover:border-accent/30 transition-all">

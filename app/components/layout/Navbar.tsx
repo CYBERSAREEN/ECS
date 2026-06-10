@@ -32,7 +32,7 @@ export default function Navbar() {
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "bg-black/85 backdrop-blur-xl border-b border-white/10"
+          ? "bg-[#0a0a0a]/85 backdrop-blur-xl border-b border-white/10"
           : "bg-transparent border-b border-transparent"
       }`}
     >
@@ -45,7 +45,7 @@ export default function Navbar() {
             width={30}
             height={30}
             priority
-            className="h-7 w-auto group-hover:drop-shadow-[0_0_8px_rgba(252,163,17,0.5)] transition-all"
+            className="h-7 w-auto group-hover:drop-shadow-[0_0_8px_rgba(239,35,60,0.5)] transition-all"
           />
           <span className="font-heading font-bold text-white text-sm tracking-tight hidden sm:block">
             EXCELON<span className="text-accent">CS</span>
@@ -73,7 +73,7 @@ export default function Navbar() {
         <div className="hidden md:flex">
           <Link
             href="/contact"
-            className="group inline-flex items-center gap-1.5 bg-accent text-black text-sm font-bold px-4 py-2 rounded-lg hover:shadow-[0_0_20px_rgba(252,163,17,0.45)] transition-all"
+            className="group inline-flex items-center gap-1.5 bg-accent text-white text-sm font-bold px-4 py-2 rounded-lg hover:shadow-[0_0_20px_rgba(239,35,60,0.45)] transition-all"
           >
             Book a Service
             <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
@@ -92,7 +92,7 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {open && (
-        <div className="md:hidden bg-black/95 backdrop-blur-xl border-b border-white/10 px-4 pb-5 pt-2">
+        <div className="md:hidden bg-[#0a0a0a]/95 backdrop-blur-xl border-b border-white/10 px-4 pb-5 pt-2">
           {links.map(({ href, label }) => (
             <Link
               key={href}
@@ -108,7 +108,7 @@ export default function Navbar() {
           <Link
             href="/contact"
             onClick={() => setOpen(false)}
-            className="mt-4 block bg-accent text-black text-sm font-bold px-4 py-3 rounded-lg text-center"
+            className="mt-4 block bg-accent text-white text-sm font-bold px-4 py-3 rounded-lg text-center"
           >
             Book a Service
           </Link>
