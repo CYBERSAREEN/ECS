@@ -1,0 +1,70 @@
+<%- include('partials/head', { title: 'Projects | Excelon Cyber Solutions', description: 'Our portfolio — web development projects and security research case studies.' }) %>
+<%- include('partials/loader') %>
+<%- include('partials/header', { active: '/projects' }) %>
+
+<main>
+  <header class="page-header">
+    <div class="ph-lines"></div>
+    <div class="ph-accent"></div>
+    <div class="container-narrow">
+      <span class="eyebrow reveal">PORTFOLIO</span>
+      <h1 class="reveal" data-delay="1">Our Projects</h1>
+      <p class="reveal" data-delay="2">Work we&apos;re proud of. Results that speak.</p>
+    </div>
+  </header>
+
+  <section class="section section--alt">
+    <div class="container" style="max-width:920px;">
+      <div class="text-center">
+        <div class="tabs">
+          <button class="tab active" data-tab="web" data-tab-group="proj">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20"/></svg>
+            Web Development
+          </button>
+          <button class="tab" data-tab="sec" data-tab-group="proj">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Security Research
+          </button>
+        </div>
+      </div>
+
+      <!-- Web panel -->
+      <div class="tab-panel active" data-tab-panel="web" data-tab-panel-group="proj">
+        <div class="card">
+          <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:18px;">
+            <div>
+              <h3 style="font-size:1.5rem;">THE RAW STUDIOS</h3>
+              <a href="https://therawstudios.in" target="_blank" rel="noopener" style="color:var(--red);font-size:.88rem;font-weight:600;display:inline-flex;align-items:center;gap:6px;margin-top:6px;">therawstudios.in
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6M10 14 21 3"/></svg>
+              </a>
+            </div>
+            <span class="badge-mini">Delivered in 3 weeks</span>
+          </div>
+          <p style="font-size:.92rem;">Scaling an institute for music, dance, art, and craft — from local studio to global digital presence. Mr. Rounak&apos;s vision was clear: make The Raw Studios the digital face of their artistic legacy, celebrating creativity for every age group from 4 to 50+.</p>
+          <ul class="feat-list">
+            <% ["Static website with GSAP animations, responsive across all devices","Admin dashboard for CRUD on courses and teachers","CRM and Enquiry Dashboard with WhatsApp integration","SEO-friendly with optimised pixel ad generation"].forEach(function(f){ %>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4 12 14.01l-3-3"/></svg><%= f %></li>
+            <% }); %>
+          </ul>
+          <div class="proj-shots">
+            <div class="proj-shot"><img src="/projects/images/therawstudios/shot-1.png" alt="The Raw Studios — homepage" loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;" /></div>
+            <div class="proj-shot"><img src="/projects/images/therawstudios/shot-2.png" alt="The Raw Studios — courses section" loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;" /></div>
+            <div class="proj-shot"><img src="/projects/images/therawstudios/shot-3.png" alt="The Raw Studios — enquiry dashboard" loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;" /></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Security panel -->
+      <div class="tab-panel" data-tab-panel="sec" data-tab-panel-group="proj">
+        <div class="card text-center" style="padding:48px 32px;">
+          <span class="card__icon" style="margin:0 auto 18px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span>
+          <h3>Confidentiality is Our Standard</h3>
+          <p style="max-width:440px;margin:10px auto 0;">Security assessment case studies are available under NDA upon request. We respect client confidentiality as much as we protect their systems.</p>
+          <a href="/contact" class="btn btn-primary" style="margin-top:26px;">Request Case Study</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<%- include('partials/footer') %>

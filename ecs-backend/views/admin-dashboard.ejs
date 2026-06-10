@@ -1,0 +1,281 @@
+<%- include('partials/head', { title: 'Dashboard | ECS Admin', description: 'Admin panel.' }) %>
+
+<div class="admin-wrap">
+  <!-- Sidebar -->
+  <aside class="admin-side" id="adminSide">
+    <div class="admin-side__top">
+      <img src="/brand/logo-dark-2x.png" alt="ECS" onerror="this.src='/brand/icon-dark-128px.png';this.style.height='30px';" />
+      <p>Admin Panel</p>
+    </div>
+    <nav class="admin-nav">
+      <%
+        var nav = [
+          { id:'overview', label:'Dashboard', icon:'<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>' },
+          { id:'services', label:'Services', icon:'<circle cx="12" cy="12" r="10"/><path d="M2 12h20"/>' },
+          { id:'team', label:'Team', icon:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>' },
+          { id:'projects', label:'Projects', icon:'<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>' },
+          { id:'patents', label:'Patents', icon:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>' },
+          { id:'leads', label:'Leads', icon:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>' }
+        ];
+        nav.forEach(function(n, i){ %>
+        <button class="<%= i===0 ? 'active' : '' %>" data-panel="<%= n.id %>">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><%- n.icon %></svg> <%= n.label %>
+        </button>
+      <% }); %>
+    </nav>
+    <div style="padding:16px;border-top:1px solid var(--border);">
+      <button class="logout" id="logoutBtn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg> Logout</button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="admin-main">
+    <div class="admin-topbar">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button id="sideToggle" style="color:var(--ink);display:none;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+        <span class="brand"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> ADMIN · EXCELON CYBER SOLUTIONS</span>
+      </div>
+    </div>
+    <div class="admin-content">
+      <!-- Overview -->
+      <div data-panel-content="overview">
+        <h2 style="font-size:1.5rem;margin-bottom:20px;">Dashboard Overview</h2>
+        <div class="grid grid-4" style="margin-bottom:24px;">
+          <% [['Services','svcCount'],['Team','teamCount'],['Projects','projCount'],['Leads','leadCount']].forEach(function(s){ %>
+            <div class="card stat-card"><span class="card__icon" style="margin:0;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/></svg></span><div><div class="num" id="<%= s[1] %>">—</div><div class="lbl"><%= s[0] %></div></div></div>
+          <% }); %>
+        </div>
+        <div class="card"><h3 style="margin-bottom:12px;">Recent Leads</h3><div id="recentLeads"><p style="color:var(--muted-2);font-size:.85rem;">Connect Supabase to view live leads.</p></div></div>
+      </div>
+
+      <!-- Other panels -->
+      <% ['services','team','projects','patents','leads'].forEach(function(p){ %>
+        <div data-panel-content="<%= p %>" style="display:none;">
+          <div class="table-wrap">
+            <div class="table-wrap__head">
+              <h3 style="text-transform:capitalize;"><%= p %></h3>
+              <% if(p !== 'leads'){ %><button class="btn btn-primary" data-add="<%= p %>" style="padding:8px 16px;font-size:.82rem;">+ Add</button><% } %>
+            </div>
+            <div id="form-<%= p %>" style="display:none;padding:20px 24px;border-bottom:1px solid var(--border);"></div>
+            <table>
+              <thead><tr id="head-<%= p %>"></tr></thead>
+              <tbody id="rows-<%= p %>"><tr><td colspan="6" style="text-align:center;color:var(--muted-2);padding:32px;">Loading…</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Panel switching
+  document.querySelectorAll('.admin-nav button').forEach(function(b){
+    b.addEventListener('click', function(){
+      var id = b.getAttribute('data-panel');
+      document.querySelectorAll('.admin-nav button').forEach(function(x){ x.classList.remove('active'); });
+      b.classList.add('active');
+      document.querySelectorAll('[data-panel-content]').forEach(function(p){
+        p.style.display = p.getAttribute('data-panel-content') === id ? 'block' : 'none';
+      });
+      document.getElementById('adminSide').classList.remove('open');
+    });
+  });
+  // Mobile sidebar
+  var st = document.getElementById('sideToggle');
+  if (st) st.addEventListener('click', function(){ document.getElementById('adminSide').classList.toggle('open'); });
+  if (window.innerWidth <= 768 && st) st.style.display = 'block';
+  // Logout
+  document.getElementById('logoutBtn').addEventListener('click', async function(){
+    try { await fetch('/api/admin/logout', { method:'POST', credentials:'include' }); } catch(e){}
+    window.location.href = '/vadmin-db7180';
+  });
+  // Load counts (best-effort)
+  async function load(url){ try { var r = await fetch(url, { credentials:'include' }); if(!r.ok) return null; return await r.json(); } catch(e){ return null; } }
+  (async function(){
+    var s = await load('/api/services'); if(Array.isArray(s)) document.getElementById('svcCount').textContent = s.length;
+    var t = await load('/api/team'); if(Array.isArray(t)) document.getElementById('teamCount').textContent = t.length;
+    var p = await load('/api/projects'); if(Array.isArray(p)) document.getElementById('projCount').textContent = p.length;
+    var l = await load('/api/leads'); if(Array.isArray(l)) { document.getElementById('leadCount').textContent = l.length;
+      if(l.length){ document.getElementById('recentLeads').innerHTML = l.slice(0,5).map(function(x){ return '<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);"><div><div style="color:var(--ink);font-size:.88rem;">'+esc(x.name)+'</div><div style="color:var(--muted-2);font-size:.78rem;">'+esc(x.service_required||'')+' · '+esc(x.email)+'</div></div><span class="status-pill">'+esc(x.status)+'</span></div>'; }).join(''); }
+      renderLeads(l);
+    }
+  })();
+
+  // ── Leads panel: hot-lead table + one-tap WhatsApp reply ──
+  function esc(s){ var d = document.createElement('div'); d.textContent = String(s == null ? '' : s); return d.innerHTML; }
+  var REPLY_TEXT = 'Hi glad to hear that, We are currently experiencing a very high demand and so we will revert back to you';
+  var LEAD_STATUSES = ['new','contacted','qualified','closed'];
+
+  function renderLeads(leads){
+    document.getElementById('head-leads').innerHTML =
+      '<th>Name</th><th>Service / Query</th><th>Contact</th><th>Status</th><th>Reply</th>';
+    if(!leads.length){
+      document.getElementById('rows-leads').innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted-2);padding:32px;">No leads yet.</td></tr>';
+      return;
+    }
+    document.getElementById('rows-leads').innerHTML = leads.map(function(x){
+      var wa = x.phone
+        ? '<a class="btn btn-primary" style="padding:6px 12px;font-size:.78rem;white-space:nowrap;" target="_blank" rel="noopener" href="https://wa.me/' + esc(x.phone) + '?text=' + encodeURIComponent(REPLY_TEXT) + '">WhatsApp</a>'
+        : '<span style="color:var(--muted-2);font-size:.78rem;">no number</span>';
+      var sel = '<select class="select lead-status" data-id="' + esc(x.id) + '" style="padding:6px 10px;font-size:.8rem;">'
+        + LEAD_STATUSES.map(function(s){ return '<option' + (s === x.status ? ' selected' : '') + '>' + s + '</option>'; }).join('')
+        + '</select>';
+      return '<tr>'
+        + '<td><div style="color:var(--ink);">' + esc(x.name) + '</div><div style="color:var(--muted-2);font-size:.76rem;">' + esc(x.organization || '') + '</div></td>'
+        + '<td><div>' + esc(x.service_required || '-') + '</div><div style="color:var(--muted-2);font-size:.76rem;max-width:260px;">' + esc(x.message || '') + '</div></td>'
+        + '<td><div style="font-size:.8rem;">' + esc(x.email) + '</div><div style="color:var(--muted-2);font-size:.78rem;">' + esc(x.phone || '') + '</div></td>'
+        + '<td>' + sel + '</td>'
+        + '<td>' + wa + '</td>'
+        + '</tr>';
+    }).join('');
+    document.querySelectorAll('.lead-status').forEach(function(sel){
+      sel.addEventListener('change', function(){
+        fetch('/api/leads/' + sel.getAttribute('data-id'), {
+          method: 'PATCH', credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: sel.value })
+        }).catch(function(){});
+      });
+    });
+  }
+
+  // ── Generic CRUD for services / team / projects / patents ──
+  var ENTITIES = {
+    services: {
+      api: '/api/services', listApi: '/api/services',
+      cols: ['title', 'category', 'badge'],
+      fields: [
+        { name: 'title', label: 'Title', required: true },
+        { name: 'category', label: 'Category', type: 'select', options: ['web_dev','security','consultancy','ai'], required: true },
+        { name: 'description', label: 'Description', type: 'textarea', required: true },
+        { name: 'badge', label: 'Badge (optional)' }
+      ]
+    },
+    team: {
+      api: '/api/team', listApi: '/api/team',
+      cols: ['name', 'role', 'photo_url'],
+      fields: [
+        { name: 'name', label: 'Name', required: true },
+        { name: 'role', label: 'Role', required: true },
+        { name: 'bio', label: 'Bio', type: 'textarea' },
+        { name: 'photo_url', label: 'Photo URL (e.g. /img/team/x.jpeg)' },
+        { name: 'initials', label: 'Initials (fallback avatar)' }
+      ]
+    },
+    projects: {
+      api: '/api/projects', listApi: '/api/projects',
+      cols: ['title', 'type', 'delivery_time'],
+      fields: [
+        { name: 'type', label: 'Type', type: 'select', options: ['web_dev','security'], required: true },
+        { name: 'title', label: 'Title', required: true },
+        { name: 'link', label: 'Link (URL)' },
+        { name: 'description', label: 'Description', type: 'textarea', required: true },
+        { name: 'functionalities', label: 'Functionalities', type: 'textarea' },
+        { name: 'delivery_time', label: 'Delivery time' }
+      ]
+    },
+    patents: {
+      api: '/api/patents', listApi: '/api/patents/all',
+      cols: ['application_number', 'title', 'status'],
+      fields: [
+        { name: 'application_number', label: 'Application #', required: true },
+        { name: 'title', label: 'Title', required: true },
+        { name: 'status', label: 'Status', type: 'select', options: ['Pending','Approved','Rejected'], required: true },
+        { name: 'date', label: 'Date', type: 'date', required: true },
+        { name: 'ref_no', label: 'Ref no' },
+        { name: 'patent_code', label: 'Patent code' },
+        { name: 'sdg', label: 'SDG alignment' }
+      ]
+    }
+  };
+
+  function buildForm(key, row){
+    var cfg = ENTITIES[key];
+    var box = document.getElementById('form-' + key);
+    var isEdit = !!row;
+    box.innerHTML = '<h4 style="margin-bottom:14px;color:var(--navy);">' + (isEdit ? 'Edit' : 'Add') + ' ' + key.slice(0, -1) + '</h4>'
+      + cfg.fields.map(function(f){
+          var v = row ? (row[f.name] == null ? '' : row[f.name]) : '';
+          if (f.type === 'select') {
+            return '<div class="field"><label>' + f.label + '</label><select class="select" name="' + f.name + '">'
+              + f.options.map(function(o){ return '<option' + (o === v ? ' selected' : '') + '>' + o + '</option>'; }).join('')
+              + '</select></div>';
+          }
+          if (f.type === 'textarea') {
+            return '<div class="field"><label>' + f.label + '</label><textarea class="textarea" name="' + f.name + '">' + esc(v) + '</textarea></div>';
+          }
+          var t = f.type === 'date' ? 'date' : 'text';
+          var dv = (f.type === 'date' && v) ? String(v).slice(0, 10) : v;
+          return '<div class="field"><label>' + f.label + '</label><input class="input" type="' + t + '" name="' + f.name + '" value="' + esc(dv) + '" /></div>';
+        }).join('')
+      + '<div style="display:flex;gap:10px;">'
+      + '<button class="btn btn-primary" data-save style="padding:10px 20px;font-size:.85rem;">Save</button>'
+      + '<button class="btn btn-secondary" data-cancel style="padding:10px 20px;font-size:.85rem;">Cancel</button>'
+      + '<span data-err style="color:#c0392b;font-size:.82rem;align-self:center;"></span></div>';
+    box.style.display = 'block';
+
+    box.querySelector('[data-cancel]').addEventListener('click', function(){ box.style.display = 'none'; });
+    box.querySelector('[data-save]').addEventListener('click', async function(){
+      var body = {};
+      cfg.fields.forEach(function(f){
+        var el = box.querySelector('[name="' + f.name + '"]');
+        if (el && el.value !== '') body[f.name] = el.value;
+      });
+      var url = isEdit ? cfg.api + '/' + row.id : cfg.api;
+      try {
+        var r = await fetch(url, {
+          method: isEdit ? 'PUT' : 'POST', credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        if (!r.ok) {
+          var j = await r.json().catch(function(){ return {}; });
+          box.querySelector('[data-err]').textContent = j.error || (j.errors && j.errors[0] && (j.errors[0].msg + ': ' + j.errors[0].path)) || ('Failed (' + r.status + ')');
+          return;
+        }
+        box.style.display = 'none';
+        loadEntity(key);
+      } catch(e){ box.querySelector('[data-err]').textContent = 'Network error'; }
+    });
+  }
+
+  async function loadEntity(key){
+    var cfg = ENTITIES[key];
+    var data = await load(cfg.listApi);
+    document.getElementById('head-' + key).innerHTML =
+      cfg.cols.map(function(c){ return '<th>' + c.replace(/_/g, ' ') + '</th>'; }).join('') + '<th>Actions</th>';
+    var tbody = document.getElementById('rows-' + key);
+    if (!Array.isArray(data)) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted-2);padding:32px;">Could not load — check DB connection.</td></tr>'; return; }
+    if (!data.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted-2);padding:32px;">No entries yet — use + Add.</td></tr>'; return; }
+    tbody.innerHTML = data.map(function(row){
+      return '<tr>'
+        + cfg.cols.map(function(c){ return '<td style="max-width:340px;">' + esc(row[c] == null ? '-' : String(row[c]).slice(0, 90)) + '</td>'; }).join('')
+        + '<td style="white-space:nowrap;">'
+        + '<button class="btn btn-secondary" data-edit="' + esc(row.id) + '" style="padding:6px 12px;font-size:.78rem;margin-right:6px;">Edit</button>'
+        + '<button data-del="' + esc(row.id) + '" style="color:#c0392b;font-size:.78rem;font-weight:600;">Delete</button>'
+        + '</td></tr>';
+    }).join('');
+    tbody.querySelectorAll('[data-edit]').forEach(function(b){
+      b.addEventListener('click', function(){
+        var row = data.find(function(x){ return x.id === b.getAttribute('data-edit'); });
+        buildForm(key, row);
+        document.getElementById('form-' + key).scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+    });
+    tbody.querySelectorAll('[data-del]').forEach(function(b){
+      b.addEventListener('click', async function(){
+        if (!confirm('Delete this entry permanently?')) return;
+        await fetch(ENTITIES[key].api + '/' + b.getAttribute('data-del'), { method: 'DELETE', credentials: 'include' }).catch(function(){});
+        loadEntity(key);
+      });
+    });
+  }
+
+  document.querySelectorAll('[data-add]').forEach(function(b){
+    b.addEventListener('click', function(){ buildForm(b.getAttribute('data-add'), null); });
+  });
+  ['services','team','projects','patents'].forEach(loadEntity);
+</script>
+</body>
+</html>

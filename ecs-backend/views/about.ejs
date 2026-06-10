@@ -1,0 +1,83 @@
+<%- include('partials/head', { title: 'About | Excelon Cyber Solutions', description: 'Meet Vedant Sareen — Founder & CTO of Excelon Cyber Solutions. Penetration tester, web developer, AI automation engineer.' }) %>
+<%- include('partials/loader') %>
+<%- include('partials/header', { active: '/about' }) %>
+
+<main>
+  <header class="page-header">
+    <div class="ph-lines"></div>
+    <div class="ph-accent"></div>
+    <div class="container-narrow">
+      <span class="eyebrow reveal">ABOUT</span>
+      <h1 class="reveal" data-delay="1">Meet Vedant Sareen</h1>
+      <p class="reveal" data-delay="2">Founder &amp; CTO — penetration tester, web developer, AI automation engineer, Red Teamer &amp; VAPT specialist.</p>
+    </div>
+  </header>
+
+  <!-- Bio -->
+  <section class="section section--alt">
+    <div class="container" style="max-width:1000px;">
+      <div class="split">
+        <div class="reveal">
+          <img
+            src="/img/team/vedant.jpeg"
+            alt="Vedant Sareen — Founder & CTO, Excelon Cyber Solutions"
+            style="border-radius:var(--radius-lg);border:1px solid var(--border-mid);max-width:360px;width:100%;margin:0 auto;display:block;object-fit:cover;"
+          />
+        </div>
+        <div class="reveal" data-delay="1">
+          <span class="eyebrow">FOUNDER &amp; CTO</span>
+          <h2 style="margin-top:12px;font-size:1.8rem;">The person behind the security.</h2>
+          <p class="lead mt-16">I&apos;m a professional penetration tester, web developer, AI automation engineer, Red Teamer, and VAPT specialist — basically, your cyber guy who&apos;s keen on finding every crack in the digital armor and patching it before the bad actors do.</p>
+          <p class="lead">In a world where people debate whether AI makes security engineers obsolete, I show up to secure the AI models themselves — fine-tuning parameters, hardening local LLMs, and building defenses that protect the systems everyone else trusts blindly.</p>
+          <p class="lead">When I&apos;m AFK, I practice music — I&apos;m a judge at interuniversity competitions, a performer, and a music mentor. The same creative discipline that makes a great musician makes a great hacker: pattern recognition, patience, and the courage to try something nobody else has.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mission & Vision -->
+  <section class="section">
+    <div class="container" style="max-width:900px;">
+      <div class="grid grid-2">
+        <div class="card reveal">
+          <span class="card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg></span>
+          <h3>My Mission</h3>
+          <p>My mission is to earn your trust, carry your blessings, and secure your digital identity as if it were my own. Privacy is non-negotiable. The moment you share your data with the digital world, you are trusting someone to protect it. I take that responsibility personally — your digital identity is as real, and as vulnerable, as your physical one.</p>
+        </div>
+        <div class="card reveal" data-delay="1">
+          <span class="card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></span>
+          <h3>My Vision</h3>
+          <p>When I was a student, I had no roadmap. Nobody handed me a cybersecurity career guide — I had to carve my own path through trial, error, and obsession. By the time Web 4.0 arrives, I want every aspiring security engineer to have a personalized, AI-powered learning path that meets them exactly where they are.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Timeline -->
+  <section class="section section--alt">
+    <div class="container-narrow">
+      <div class="section-head reveal">
+        <span class="eyebrow">COMPANY JOURNEY</span>
+        <h2>Our Story</h2>
+      </div>
+      <div class="timeline">
+        <%
+          var tl = [
+            { yr:'2012', e:'Excelon Cyber Solutions founded (CIN: U72200PB2012PTC036199)' },
+            { yr:'2023', e:'First enterprise WAPT engagement — zero false positives' },
+            { yr:'2024', e:'PenBox DMAS patent filed — distributed AI security appliance' },
+            { yr:'2025', e:'AI Cyber Tutor patent application submitted' },
+            { yr:'2026', e:'Expanding into startup consultancy & Web 4.0 security research' }
+          ];
+          tl.forEach(function(t){ %>
+          <div class="tl-item reveal">
+            <div class="yr"><%= t.yr %></div>
+            <p><%= t.e %></p>
+          </div>
+        <% }); %>
+      </div>
+    </div>
+  </section>
+</main>
+
+<%- include('partials/footer') %>

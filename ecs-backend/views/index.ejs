@@ -1,0 +1,216 @@
+<%- include('partials/head', { title: 'Excelon Cyber Solutions | Cybersecurity & Web Development', description: 'Premium cybersecurity — penetration testing, WAPT, AI-driven security & secure-by-design web development from Ludhiana, India.' }) %>
+<%- include('partials/loader') %>
+<%- include('partials/header', { active: '/' }) %>
+
+<main>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <div class="hero__bg-lines"></div>
+    <div class="hero__accent-blob"></div>
+    <div class="hero__inner">
+
+      <div class="hero__badge">
+        <span class="dot"></span>
+        <span>SECURE &nbsp;·&nbsp; INNOVATE &nbsp;·&nbsp; PROTECT</span>
+      </div>
+
+      <h1>
+        EXCELON<br />
+        <span class="text-red">CYBER SOLUTIONS</span>
+      </h1>
+
+      <p class="hero__sub">Offensive security, secure-by-design engineering, and AI-driven defense — protecting enterprises and startups across India.</p>
+
+      <div class="hero__type" id="typewriter" data-quotes='[
+        "The only secure computer is one that&apos;s unplugged. Ours isn&apos;t.",
+        "Security is not a product, but a process — and we never stop shipping.",
+        "In God we trust. All others we pentest.",
+        "Hackers don&apos;t take holidays. Neither does our monitoring.",
+        "sudo make me secure — and we actually can."
+      ]'>
+        <span class="prompt">&gt;</span>&nbsp;&ldquo;<span class="tw-text"></span><span class="cursor">█</span>&rdquo;
+      </div>
+
+      <div class="hero__cta">
+        <a href="/services" class="btn btn-primary btn-lg">Explore Services
+          <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <a href="/contact" class="btn btn-secondary btn-lg">Contact Us</a>
+      </div>
+
+      <div class="hero__stats">
+        <div class="stat">
+          <div class="stat__num" data-count="96" data-suffix="%">0%</div>
+          <div class="stat__bar"></div>
+          <div class="stat__label">Detection Accuracy</div>
+        </div>
+        <div class="stat">
+          <div class="stat__num" data-count="75" data-suffix="%">0%</div>
+          <div class="stat__bar"></div>
+          <div class="stat__label">Latency Reduction</div>
+        </div>
+        <div class="stat">
+          <div class="stat__num" data-count="83" data-suffix="%">0%</div>
+          <div class="stat__bar"></div>
+          <div class="stat__label">Faster Convergence</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scroll-ind">
+      <span>Scroll</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+    </div>
+  </section>
+
+  <!-- ============ WHY TRUST US ============ -->
+  <section class="section section--alt">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">WHY TRUST US</span>
+        <h2>We Think Like Attackers</h2>
+        <p>Beyond compliance checkboxes — so you can defend like experts.</p>
+      </div>
+      <div class="grid grid-4">
+        <%
+          var trust = [
+            { tag:'OWASP · REAL-WORLD TTPs', title:'Security-First Approach', desc:'Every assessment follows industry-recognized methodologies, including OWASP standards and real-world attacker techniques — focused on exploitable vulnerabilities that pose genuine business risk.', icon:'<path d="M12 2 4 5v6c0 5 3.4 7.8 8 9 4.6-1.2 8-4 8-9V5z"/>' },
+            { tag:'BEYOND SCANNERS', title:'Human-Led Testing', desc:'Automated tools find common issues. Our researchers perform manual testing to uncover complex vulnerabilities, business-logic flaws, and attack paths scanners miss.', icon:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>' },
+            { tag:'PROOF-OF-CONCEPT', title:'Actionable Reports', desc:'We explain impact, provide proof-of-concept evidence, and deliver clear remediation guidance so your team fixes issues efficiently — not just a score.', icon:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/>' },
+            { tag:'EMERGING THREATS', title:'Research-Driven Expertise', desc:'Our team actively studies emerging threats, exploit techniques, and modern attack vectors so every assessment reflects today&apos;s evolving landscape.', icon:'<path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-5 0V4.5A2.5 2.5 0 0 1 9.5 2z"/>' }
+          ];
+          trust.forEach(function(c, i){ %>
+          <div class="card reveal" data-delay="<%= i %>">
+            <span class="card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><%- c.icon %></svg></span>
+            <span class="card__tag"><%= c.tag %></span>
+            <h3><%= c.title %></h3>
+            <p><%- c.desc %></p>
+          </div>
+        <% }); %>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ OUR SERVICES ============ -->
+  <section class="section">
+    <div class="container" style="max-width:980px;">
+      <div class="section-head reveal">
+        <span class="eyebrow">WHAT WE DO</span>
+        <h2>Our Services</h2>
+        <p>Tap any service to learn more.</p>
+      </div>
+      <div class="grid grid-2">
+        <%
+          var svcs = [
+            { title:'Web Development', short:'Secure-by-design static & dynamic websites', badge:'', detail:'Owning a business without a digital presence is leaving revenue on the table. We build scalable static and dynamic websites engineered for performance, security, and growth — no shortcuts, no vibe-coded vulnerabilities.', icon:'<circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20"/>' },
+            { title:'WAPT', short:'Web Application Penetration Testing', badge:'', detail:'Automated scanners find yesterday&apos;s problems. Our AI-assisted WAPT generates faster, more reliable vulnerability reports with zero surface disclosure — a true attacker&apos;s view with actionable, prioritised remediation.', icon:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>' },
+            { title:'AI-Based Cyber Tutor', short:'Patent-pending personalized security learning', badge:'Coming Soon', detail:'A patent-pending AI tutor that adapts to your learning pace and teaches cybersecurity dynamically. Personalized roadmaps, real-world scenarios, zero generic curriculum.', icon:'<path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-5 0V4.5A2.5 2.5 0 0 1 9.5 2zM14.5 2A2.5 2.5 0 0 0 12 4.5"/>' },
+            { title:'Startup Consultancy', short:'CRM, dashboards & operational backbone', badge:'', detail:'From CRM dashboards and lead-management systems to admin panels, attendance management, and structured courses — we help startups build the operational backbone they need to scale from Day 1.', icon:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/>' }
+          ];
+          svcs.forEach(function(s, i){ %>
+          <div class="card svc reveal" data-accordion-item data-delay="<%= i % 2 %>">
+            <button class="svc__head" data-accordion>
+              <span class="card__icon" style="margin:0;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><%- s.icon %></svg></span>
+              <span style="flex:1;min-width:0;">
+                <span class="svc__title-row"><h3><%= s.title %></h3><% if(s.badge){ %><span class="badge-mini"><%= s.badge %></span><% } %></span>
+                <span class="svc__short"><%= s.short %></span>
+              </span>
+              <svg class="svc__chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div class="svc__body"><div class="svc__body-inner">
+              <p><%- s.detail %></p>
+              <a href="/services" class="svc__link">View all services
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </a>
+            </div></div>
+          </div>
+        <% }); %>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TEAM ============ -->
+  <section class="section section--alt">
+    <div class="container" style="max-width:1000px;">
+      <div class="section-head reveal">
+        <span class="eyebrow">THE TEAM</span>
+        <h2>Meet Our Team</h2>
+        <p>Security professionals who think like attackers, build like engineers.</p>
+      </div>
+      <div class="grid grid-3">
+        <%
+          var team = [
+            { name:'Vedant Sareen', role:'Director & CTO', photo:'/img/team/vedant.jpeg', initials:'VS', bio:'Penetration tester, web developer, AI automation engineer, Red Teamer & VAPT specialist. Ex-EY Senior Security Analyst. Patent holder for PenBox DMAS.' },
+            { name:'Suneha Passi', role:'Senior Web Developer', photo:'/img/team/suneha.jpeg', initials:'SP', bio:'Full-stack web designer, prompt engineer, and project team lead. Delivering pixel-perfect, accessible interfaces at scale.' },
+            { name:'Hardik Garg', role:'Lead Cybersecurity Analyst', photo:'/img/team/hardik.jpeg', initials:'HG', bio:'Deep expertise in red teaming, cloud security, DevSecOps, and bug bounty. Penetration tester with systemic attack-path analysis.' }
+          ];
+          team.forEach(function(m, i){ %>
+          <div class="card team-card reveal" data-delay="<%= i %>">
+            <div class="team-avatar">
+              <% if(m.photo){ %><img src="<%= m.photo %>" alt="<%= m.name %>" /><% } else { %><div class="initials"><%= m.initials %></div><% } %>
+            </div>
+            <h3><%= m.name %></h3>
+            <div class="role"><%= m.role %></div>
+            <p><%= m.bio %></p>
+          </div>
+        <% }); %>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FREE SCAN CTA ============ -->
+  <section class="section">
+    <div class="container" style="max-width:900px;">
+      <div class="scan-panel reveal">
+        <div class="scan-panel__lines"></div>
+        <span class="eyebrow">FREE SECURITY SCAN</span>
+        <h2>Is Your Website Secure?</h2>
+        <p>Get a quick AI-driven vulnerability scan of your web application. No signup required. Report in your inbox within the hour.</p>
+        <div class="hero__cta">
+          <a href="/scan" class="btn btn-primary btn-lg">Run a Free Scan
+            <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+          <a href="/contact" class="btn btn-secondary btn-lg" style="color:#fff;border-color:rgba(246,247,235,.25);">Book Full Assessment</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WHY ECS ============ -->
+  <section class="section section--alt">
+    <div class="container">
+      <div class="ecs-split">
+        <div class="reveal">
+          <span class="eyebrow">WHY CHOOSE ECS</span>
+          <h2 style="margin-top:12px;">Security Isn&apos;t a Feature.<br /><span class="text-red">It&apos;s the Foundation.</span></h2>
+          <p class="lead mt-16">In a world racing toward AI, the greatest vulnerability is assuming technology alone keeps you safe. At ECS, we sit at the intersection of human intelligence and machine precision — because the best firewall is still a trained mind.</p>
+          <p class="lead">Every breach costs more than money. It costs <strong>trust</strong>. And trust, once broken, is the hardest thing to rebuild. We don&apos;t sell assessments — we become your long-term digital guardian.</p>
+          <a href="/about" class="btn btn-ghost mt-24">Know More
+            <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+        <div class="grid grid-2" style="margin-top:0;">
+          <%
+            var pillars = [
+              { num:'96%', label:'Detection Accuracy', sub:'Real attackers, real results', icon:'<path d="M13 2 3 14h9l-1 8 10-12h-9z"/>' },
+              { num:'3×', label:'Faster Remediation', sub:'Clear, prioritised fixes', icon:'<path d="M3 17l6-6 4 4 8-8"/><path d="M17 7h4v4"/>' },
+              { num:'4+', label:'Years of Research', sub:'Deep-tech expertise', icon:'<circle cx="12" cy="8" r="6"/><path d="M9 13l-2 9 5-3 5 3-2-9"/>' },
+              { num:'1hr', label:'Avg. Report Time', sub:'Speed without compromise', icon:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>' }
+            ];
+            pillars.forEach(function(p, i){ %>
+            <div class="card pillar reveal" data-delay="<%= i %>">
+              <span class="card__icon" style="margin:0 auto 8px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><%- p.icon %></svg></span>
+              <div class="pnum"><%= p.num %></div>
+              <div class="plabel"><%= p.label %></div>
+              <div class="psub"><%= p.sub %></div>
+            </div>
+          <% }); %>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<%- include('partials/footer') %>

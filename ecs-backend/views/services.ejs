@@ -1,0 +1,64 @@
+<%- include('partials/head', { title: 'Services | Excelon Cyber Solutions', description: 'Full-stack web development and offensive security services — WAPT, API testing, AI security, and more.' }) %>
+<%- include('partials/loader') %>
+<%- include('partials/header', { active: '/services' }) %>
+
+<main>
+  <header class="page-header">
+    <div class="ph-lines"></div>
+    <div class="ph-accent"></div>
+    <div class="container-narrow">
+      <span class="eyebrow reveal">WHAT WE DO</span>
+      <h1 class="reveal" data-delay="1">Our Services</h1>
+      <p class="reveal" data-delay="2">Secure by design. Built to scale. From full-stack web development to deep offensive security.</p>
+    </div>
+  </header>
+
+  <%
+    var web = ["E-Commerce Website","Jewelry Website","Portfolio Website","Service Website","Business Website","School Website","Blog Website","News Portal","Job Portals","Multi-Vendor Website","Salon / Gym / Spa Website","Real Estate Website","Handbags / Wallet Website","Clothing Website","Electronic Appliances Website","Old Laptops Selling Website"];
+    var sec = ["Web Application Penetration Testing","API Security Testing","Vulnerability Assessment","OWASP Top 10 Security Testing","Authentication & Authorization Testing","Source Code Security Review","Secure Code Review","Black Box Penetration Testing","Grey Box Penetration Testing","White Box Penetration Testing","DevSecOps Security Review","CI/CD Pipeline Security Assessment","Bug Bounty Program Assistance","Phishing Simulation Campaigns","Security Awareness Training","Security Consulting","Cyber Risk Assessment","Startup Security Audits","E-Commerce Security Testing","CMS Security Testing (WordPress, Shopify, Drupal)","AI Application Security Testing","LLM & Agent Security Assessment"];
+  %>
+
+  <!-- Web Dev -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="card__icon" style="margin:0 auto 12px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20"/></svg></span>
+        <h2>Web Development</h2>
+        <p>Secure-by-design. Scalable from day one. No vibe-coded vulnerabilities.</p>
+      </div>
+      <div class="grid grid-4">
+        <% web.forEach(function(s, i){ %>
+          <div class="tile reveal" data-delay="<%= i % 4 %>"><span class="bullet"></span><span><%= s %></span></div>
+        <% }); %>
+      </div>
+      <div class="text-center" style="margin-top:40px;">
+        <a href="/contact" class="btn btn-ghost">Want a bundle? Contact us
+          <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Security -->
+  <section class="section section--alt">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="card__icon" style="margin:0 auto 12px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+        <h2>Security &amp; WAPT</h2>
+        <p>Offensive testing across the full stack — web, API, cloud, AI, and beyond.</p>
+      </div>
+      <div class="grid grid-4">
+        <% sec.forEach(function(s, i){ %>
+          <div class="tile reveal" data-delay="<%= i % 4 %>"><span class="bullet"></span><span><%= s %></span></div>
+        <% }); %>
+      </div>
+      <div class="text-center" style="margin-top:40px;">
+        <a href="/contact" class="btn btn-ghost">Want a bundle? Contact us
+          <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Env & secrets — NEVER commit
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+*.pem
+*.key
+
+# Logs
+*.log
+npm-debug.log*
+
+# Build output
+.next/
+dist/
+build/
+.vercel/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+
+# Temp
+tmp/
+*.tmp
+
+# Client uploads (per-project; keep structure, ignore binaries if large)
+# ecs-backend/public/uploads/
+
+# Local secrets notes — NEVER commit
+tokens.md

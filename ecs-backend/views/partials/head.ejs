@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <%
+    const _siteUrl = (typeof siteUrl !== 'undefined' && siteUrl) ? siteUrl : 'http://localhost:3000';
+    const _path = (typeof pagePath !== 'undefined') ? pagePath : '/';
+    const _title = (typeof title !== 'undefined' && title) ? title : 'Excelon Cyber Solutions — Penetration Testing & Secure Web Development';
+    const _desc = (typeof description !== 'undefined' && description) ? description : 'Premium cybersecurity services — penetration testing, WAPT, AI-driven security, and secure-by-design web development from Ludhiana, India.';
+    const _canonical = _siteUrl.replace(/\/$/, '') + _path;
+  %>
+  <title><%= _title %></title>
+  <meta name="description" content="<%= _desc %>" />
+  <meta name="keywords" content="cybersecurity, penetration testing, WAPT, web application security, API security testing, vulnerability assessment, red teaming, AI security, LLM security, DevSecOps, secure code review, bug bounty, web development, ecommerce website, Shopify development, startup consultancy, CRM dashboard, Ludhiana, Punjab, India, PenBox DMAS, CyberSage" />
+  <meta name="robots" content="<%= (typeof robotsMeta !== 'undefined' && robotsMeta) ? robotsMeta : 'index, follow, max-image-preview:large' %>" />
+  <meta name="author" content="Excelon Cyber Solutions" />
+  <meta name="theme-color" content="#f6f7eb" />
+  <link rel="canonical" href="<%= _canonical %>" />
+
+  <!-- Open Graph -->
+  <meta property="og:site_name" content="Excelon Cyber Solutions" />
+  <meta property="og:title" content="<%= _title %>" />
+  <meta property="og:description" content="<%= _desc %>" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="<%= _canonical %>" />
+  <meta property="og:image" content="<%= _siteUrl.replace(/\/$/, '') %>/brand/linkedin-banner-1584x396.png" />
+  <meta property="og:locale" content="en_IN" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="<%= _title %>" />
+  <meta name="twitter:description" content="<%= _desc %>" />
+  <meta name="twitter:image" content="<%= _siteUrl.replace(/\/$/, '') %>/brand/linkedin-banner-1584x396.png" />
+
+  <link rel="icon" type="image/png" href="/brand/icon-dark-64px.png" />
+  <link rel="apple-touch-icon" href="/brand/icon-dark-128px.png" />
+
+  <!-- Structured data: Organization + WebSite -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "<%= _siteUrl %>/#org",
+        "name": "Excelon Cyber Solutions",
+        "legalName": "EXCELON CYBER SOLUTIONS PRIVATE LIMITED",
+        "url": "<%= _siteUrl %>",
+        "logo": "<%= _siteUrl.replace(/\/$/, '') %>/brand/icon-dark-256px.png",
+        "email": "securecybernetics@gmail.com",
+        "founder": { "@type": "Person", "name": "Vedant Sareen", "jobTitle": "Director & CTO" },
+        "address": { "@type": "PostalAddress", "addressLocality": "Ludhiana", "addressRegion": "Punjab", "addressCountry": "IN" },
+        "contactPoint": { "@type": "ContactPoint", "telephone": "+91-7087603933", "contactType": "sales", "availableLanguage": ["en", "hi"] },
+        "knowsAbout": ["Penetration Testing", "Web Application Security", "AI Security", "Secure Web Development"]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "<%= _siteUrl %>/#website",
+        "url": "<%= _siteUrl %>",
+        "name": "Excelon Cyber Solutions",
+        "publisher": { "@id": "<%= _siteUrl %>/#org" }
+      },
+      {
+        "@type": "ProfessionalService",
+        "@id": "<%= _siteUrl %>/#service",
+        "name": "Excelon Cyber Solutions",
+        "url": "<%= _siteUrl %>",
+        "image": "<%= _siteUrl.replace(/\/$/, '') %>/brand/linkedin-banner-1584x396.png",
+        "priceRange": "₹₹",
+        "address": { "@type": "PostalAddress", "addressLocality": "Ludhiana", "addressRegion": "Punjab", "addressCountry": "IN" },
+        "areaServed": "IN",
+        "parentOrganization": { "@id": "<%= _siteUrl %>/#org" }
+      }
+    ]
+  }
+  </script>
+
+  <% if (typeof gaId !== 'undefined' && gaId) { %>
+  <!-- Google Analytics 4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=<%= gaId %>"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', '<%= gaId %>', { anonymize_ip: true });
+    window.ECS_GA = true;
+  </script>
+  <% } %>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>

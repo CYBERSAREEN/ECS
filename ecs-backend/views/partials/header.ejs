@@ -1,0 +1,38 @@
+<%
+  var nav = [
+    { href: "/", label: "Home" },
+    { href: "/services", label: "Services" },
+    { href: "/projects", label: "Projects" },
+    { href: "/about", label: "About" },
+    { href: "/ideas", label: "Ideas" },
+    { href: "/contact", label: "Contact" }
+  ];
+  var current = typeof active !== 'undefined' ? active : '';
+%>
+<nav class="navbar" id="navbar">
+  <div class="container">
+    <a href="/" class="nav-logo">
+      <img src="/brand/icon-dark-64px.png" alt="ECS" />
+      <span>EXCELON<b> CS</b></span>
+    </a>
+    <div class="nav-links">
+      <% nav.forEach(function(item){ %>
+        <a href="<%= item.href %>" class="<%= current === item.href ? 'active' : '' %>"><%= item.label %></a>
+      <% }); %>
+    </div>
+    <div class="nav-cta">
+      <a href="/contact" class="btn btn-primary" style="padding:10px 18px;font-size:.85rem;">Book a Service
+        <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <% nav.forEach(function(item){ %>
+    <a href="<%= item.href %>" class="<%= current === item.href ? 'active' : '' %>"><%= item.label %></a>
+  <% }); %>
+  <a href="/contact" class="btn btn-primary">Book a Service</a>
+</div>

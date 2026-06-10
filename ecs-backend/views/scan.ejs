@@ -1,0 +1,129 @@
+<%- include('partials/head', { title: 'QuickScan | Excelon Cyber Solutions', description: 'Free AI-driven website vulnerability scan. No account needed — verify ownership, scan, get a report.' }) %>
+<%- include('partials/loader') %>
+<%- include('partials/header', { active: '' }) %>
+
+<main>
+  <header class="page-header">
+    <div class="ph-lines"></div>
+    <div class="ph-accent"></div>
+    <div class="container-narrow">
+      <span class="eyebrow reveal">FREE VULNERABILITY SCAN</span>
+      <h1 class="reveal" data-delay="1">QuickScan</h1>
+      <p class="reveal" data-delay="2">Test your website security — no account needed. Enter your email and URL, we verify ownership, scan, and email you the report.</p>
+    </div>
+  </header>
+
+  <!-- Form -->
+  <section class="section section--alt">
+    <div class="container" style="max-width:600px;">
+      <form id="scanForm" class="form-card reveal" novalidate>
+        <div class="field"><label>Work Email *</label><input class="input" type="email" name="email" placeholder="must match the domain you&apos;re scanning" required /></div>
+        <div class="field"><label>Website URL *</label><input class="input" type="url" name="url" placeholder="https://example.com" required /></div>
+        <div class="field">
+          <label>Verification Method *</label>
+          <label class="radio-row active"><input type="radio" name="method" value="dns" checked /><div><div class="rl">DNS TXT Record</div><div class="rd">Add a TXT record to your DNS</div></div></label>
+          <label class="radio-row"><input type="radio" name="method" value="meta" /><div><div class="rl">HTML Meta Tag</div><div class="rd">We give you a meta tag to paste in your page</div></div></label>
+          <label class="radio-row"><input type="radio" name="method" value="file" /><div><div class="rl">File Download &amp; Upload</div><div class="rd">We give you a file to upload to your server</div></div></label>
+        </div>
+        <label class="checkbox-row" style="margin-bottom:20px;">
+          <input type="checkbox" id="scanAgree" required />
+          <p>I agree that QuickScan can use my email to send the scan report and verify domain ownership. My data is automatically deleted within 6 days.</p>
+        </label>
+        <button type="submit" class="btn btn-primary btn-lg" style="width:100%;justify-content:center;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Start Scan
+        </button>
+      </form>
+      <div id="scanDone" class="form-card text-center reveal" style="display:none;">
+        <span class="card__icon" style="margin:0 auto 12px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="m4 6 8 6 8-6"/></svg></span>
+        <h3>Scan Request Received!</h3>
+        <p style="margin-top:6px;">We&apos;ll email your security report within 1 hour.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">THE PROCESS</span>
+        <h2>How It Works</h2>
+      </div>
+      <div class="grid grid-4">
+        <%
+          var steps = [
+            { n:'01', t:'Verify Ownership', d:'Prove the domain is yours via a DNS record, an HTML meta tag, or an uploaded file. No account, no password.' },
+            { n:'02', t:'AI-Driven Assessment', d:'An autonomous engine inspects your site the way an attacker would — safely. Non-intrusive and non-disruptive.' },
+            { n:'03', t:'Intelligent Enrichment', d:'Findings become an executive summary, attack paths, compliance mapping, and step-by-step remediation.' },
+            { n:'04', t:'Report Delivered', d:'Most scans finish within an hour — your report appears on screen and lands in your inbox as a shareable PDF.' }
+          ];
+          steps.forEach(function(s, i){ %>
+          <div class="card reveal" data-delay="<%= i %>">
+            <div style="font-family:var(--font-heading);font-weight:800;font-size:2rem;color:var(--red);margin-bottom:12px;line-height:1;"><%= s.n %></div>
+            <h3 style="font-size:1rem;"><%= s.t %></h3>
+            <p><%= s.d %></p>
+          </div>
+        <% }); %>
+      </div>
+    </div>
+  </section>
+
+  <!-- Coverage -->
+  <section class="section section--alt">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">COVERAGE</span>
+        <h2>What QuickScan Checks</h2>
+      </div>
+      <div class="grid grid-3">
+        <%
+          var cov = [
+            { t:'Web App Flaws', d:'Injection, broken access control, and other OWASP Top 10 risks.' },
+            { t:'Security Misconfigurations', d:'Missing headers, weak TLS/SSL, and exposed admin surfaces.' },
+            { t:'Exposed Services', d:'Open ports and services that widen your attack surface.' },
+            { t:'Email & DNS Hygiene', d:'SPF, DKIM, and DMARC gaps that enable spoofing.' },
+            { t:'Attack-Path Analysis', d:'How individual weaknesses chain into a real-world breach.' },
+            { t:'Compliance Mapping', d:'Findings aligned to recognised security control frameworks.' }
+          ];
+          cov.forEach(function(c, i){ %>
+          <div class="card reveal" data-delay="<%= i % 3 %>" style="display:flex;gap:14px;">
+            <span class="card__icon" style="margin:0;flex-shrink:0;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></span>
+            <div><h3 style="font-size:.95rem;margin-top:0;"><%= c.t %></h3><p style="font-size:.82rem;"><%= c.d %></p></div>
+          </div>
+        <% }); %>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bottom CTA -->
+  <section class="section">
+    <div class="container" style="max-width:900px;">
+      <div class="scan-panel reveal">
+        <div class="scan-panel__lines"></div>
+        <span class="eyebrow">READY FOR MORE?</span>
+        <h2>Go Beyond the Free Scan</h2>
+        <p><strong style="color:rgba(246,247,235,.85);">Good to know:</strong> QuickScan assesses your public-facing site only. A full engagement adds deep manual pen-testing, exploitation proof, and a complete prioritised remediation plan.</p>
+        <div class="hero__cta" style="margin-top:28px;">
+          <a href="/contact" class="btn btn-primary btn-lg">Book Full Assessment
+            <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+  document.getElementById('scanForm').addEventListener('submit', async function(e){
+    e.preventDefault();
+    var f = e.target;
+    if (!document.getElementById('scanAgree').checked || !f.checkValidity()) { f.reportValidity(); return; }
+    var data = { email:f.email.value, website_url:f.url.value, verification_method:f.method.value };
+    try { await fetch('/api/scan/request', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(data) }); } catch(err){}
+    f.style.display = 'none';
+    document.getElementById('scanDone').style.display = 'block';
+    document.getElementById('scanDone').classList.add('in');
+  });
+</script>
+
+<%- include('partials/footer') %>
