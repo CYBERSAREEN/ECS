@@ -21,7 +21,7 @@ export default function WhyECSSection() {
 
       {/* Ambient glow */}
       <div className="absolute bottom-0 left-1/4 w-96 h-48 pointer-events-none opacity-20"
-           style={{ background: "radial-gradient(circle, rgba(252,163,17,0.15) 0%, transparent 70%)", filter: "blur(50px)" }} />
+           style={{ background: "radial-gradient(circle, rgba(56,189,248,0.15) 0%, transparent 70%)", filter: "blur(50px)" }} />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
@@ -57,7 +57,7 @@ export default function WhyECSSection() {
             </div>
             <Link
               href="/about"
-              className="group inline-flex items-center gap-2 border border-accent/40 text-accent font-semibold px-6 py-3 rounded-xl hover:bg-accent hover:text-black transition-all duration-300"
+              className="group inline-flex items-center gap-2 border border-accent/40 text-accent font-semibold px-6 py-3 rounded-xl hover:bg-accent hover:text-[#020617] transition-all duration-300"
             >
               Know More
               <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />

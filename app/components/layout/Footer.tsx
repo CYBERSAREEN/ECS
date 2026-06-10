@@ -12,7 +12,7 @@ export default function Footer() {
     <footer className="relative bg-surface border-t border-white/10">
       {/* Ambient glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-32 pointer-events-none opacity-20"
-           style={{ background: "radial-gradient(circle, rgba(252,163,17,0.15) 0%, transparent 70%)", filter: "blur(40px)" }} />
+           style={{ background: "radial-gradient(circle, rgba(56,189,248,0.15) 0%, transparent 70%)", filter: "blur(40px)" }} />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 grid grid-cols-1 md:grid-cols-3 gap-12">
         {/* Brand */}

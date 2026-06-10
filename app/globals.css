@@ -2,20 +2,20 @@
 
 @theme {
   /* ── New palette: Black · Deep Navy · Gold · Light Grey · White ── */
-  --color-bg: #000000;           /* pure black — page background */
-  --color-surface: #14213d;      /* deep navy — card surface */
-  --color-surface-2: #1b2d4f;    /* elevated navy surface / hover */
-  --color-accent: #fca311;       /* golden amber — CTAs, glows, highlights */
-  --color-navy: #14213d;         /* deep navy — secondary surfaces, borders */
+  --color-bg: #020617;           /* pure black — page background */
+  --color-surface: #0f172a;      /* deep navy — card surface */
+  --color-surface-2: #1e293b;    /* elevated navy surface / hover */
+  --color-accent: #38bdf8;       /* golden amber — CTAs, glows, highlights */
+  --color-navy: #334155;         /* deep navy — secondary surfaces, borders */
   --color-ink: #ffffff;          /* pure white — primary text */
-  --color-muted: #e5e5e5;       /* light grey — muted text */
+  --color-muted: #94a3b8;       /* light grey — muted text */
 
   --font-sans: var(--font-inter), system-ui, sans-serif;
   --font-heading: var(--font-space-grotesk), system-ui, sans-serif;
   --font-mono: 'Courier New', monospace;
 
   --radius-card: 1rem;
-  --shadow-glow: 0 0 24px rgba(252, 163, 17, 0.3);
+  --shadow-glow: 0 0 24px rgba(56, 189, 248, 0.3);
 }
 
 * {
@@ -38,7 +38,7 @@ body {
 
 /* Selection */
 ::selection {
-  background: rgba(252, 163, 17, 0.3);
+  background: rgba(56, 189, 248, 0.3);
   color: #ffffff;
 }
 
@@ -87,12 +87,12 @@ body {
 
 /* Subtle ambient gradient glow for section backgrounds */
 .ambient-glow {
-  background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(252, 163, 17, 0.06), transparent 70%);
+  background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(56, 189, 248, 0.06), transparent 70%);
 }
 
 /* Gradient text accent — warm gold to bright amber */
 .text-gradient {
-  background: linear-gradient(135deg, #fca311 0%, #ffd166 100%);
+  background: linear-gradient(135deg, #38bdf8 0%, #7dd3fc 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -109,7 +109,7 @@ body {
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, transparent, #fca311, transparent);
+  background: linear-gradient(90deg, transparent, #38bdf8, transparent);
   transform: scaleX(0);
   transition: transform 0.4s ease;
 }

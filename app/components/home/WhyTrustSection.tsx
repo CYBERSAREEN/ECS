@@ -70,7 +70,7 @@ export default function WhyTrustSection() {
               initial="hidden"
               animate={inView ? "visible" : "hidden"}
               transition={{ duration: 0.55, delay: i * 0.1 }}
-              className="group relative bg-white/[0.03] border border-white/10 rounded-2xl p-7 hover:border-accent/40 hover:bg-white/[0.05] hover:shadow-[0_0_32px_rgba(252,163,17,0.1)] transition-all duration-300 overflow-hidden"
+              className="group relative bg-white/[0.03] border border-white/10 rounded-2xl p-7 hover:border-accent/40 hover:bg-white/[0.05] hover:shadow-[0_0_32px_rgba(56,189,248,0.1)] transition-all duration-300 overflow-hidden"
             >
               <div className="absolute top-0 left-0 right-0 h-px bg-accent scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
 

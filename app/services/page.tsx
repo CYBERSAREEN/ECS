@@ -56,7 +56,7 @@ function BundleCTA({ text }: { text: string }) {
     <div className="mt-10 flex justify-center">
       <Link
         href="/contact"
-        className="group inline-flex items-center gap-2 border border-accent/40 text-accent font-semibold px-6 py-3 rounded-xl hover:bg-accent hover:text-black transition-all duration-300"
+        className="group inline-flex items-center gap-2 border border-accent/40 text-accent font-semibold px-6 py-3 rounded-xl hover:bg-accent hover:text-[#020617] transition-all duration-300"
       >
         <Package size={16} /> {text}
         <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />

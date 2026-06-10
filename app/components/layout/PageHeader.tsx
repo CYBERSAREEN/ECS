@@ -17,7 +17,7 @@ export default function PageHeader({
         <svg width="100%" height="100%">
           <defs>
             <pattern id="ph-grid" width="56" height="56" patternUnits="userSpaceOnUse">
-              <path d="M 56 0 L 0 0 0 56" fill="none" stroke="#e5e5e5" strokeWidth="0.5" />
+              <path d="M 20 0 L 20 40 M 0 20 L 40 20" fill="none" stroke="#38bdf8" strokeWidth="0.5" opacity="0.5" />
             </pattern>
           </defs>
           <rect width="100%" height="100%" fill="url(#ph-grid)" opacity="0.04" />
