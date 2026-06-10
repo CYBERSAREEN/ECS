@@ -177,6 +177,7 @@
   }
 
   document.addEventListener("DOMContentLoaded", function () {
+    document.body.classList.add("js-ready"); // enable reveal animations
     initLoader();
     initNavbar();
     initTypewriter();

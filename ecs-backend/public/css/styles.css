@@ -704,11 +704,15 @@ p  { color: var(--muted); font-size: 1rem; line-height: 1.7; }
 @media (max-width: 440px) { .wa-badge__text { display: none; } .wa-badge { padding: 12px; } }
 
 /* ---------- Scroll reveal ---------- */
-.reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.6s var(--ease), transform 0.6s var(--ease); }
-.reveal[data-delay="1"] { transition-delay: 0.1s; }
-.reveal[data-delay="2"] { transition-delay: 0.2s; }
-.reveal[data-delay="3"] { transition-delay: 0.3s; }
-.reveal.in, body.gsap-on .reveal { opacity: 1; transform: none; }
+/* Default: content is always visible. JS adds .js-ready to body,
+   then reveal animation kicks in only for off-screen elements. */
+.reveal { opacity: 1; transform: none; transition: opacity 0.6s var(--ease), transform 0.6s var(--ease); }
+body.js-ready .reveal { opacity: 0; transform: translateY(28px); }
+body.js-ready .reveal[data-delay="1"] { transition-delay: 0.1s; }
+body.js-ready .reveal[data-delay="2"] { transition-delay: 0.2s; }
+body.js-ready .reveal[data-delay="3"] { transition-delay: 0.3s; }
+body.js-ready .reveal.in,
+body.gsap-on .reveal { opacity: 1; transform: none; }
 
 /* ---------- Why-ECS split section ---------- */
 .ecs-split { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center; }
