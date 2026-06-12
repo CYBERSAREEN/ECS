@@ -37,9 +37,12 @@ app.use(helmet({
 }));
 
 // ── CORS (for API; same-origin pages don't need it) ───────────
-const allowedOrigins = (process.env.FRONTEND_URL || `http://localhost:${PORT}`)
-  .split(',')
-  .map(o => o.trim());
+const allowedOrigins = [
+  ...(process.env.FRONTEND_URL || '').split(',').map(o => o.trim()).filter(Boolean),
+  (process.env.SITE_URL || '').replace(/\/$/, ''),
+  process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '',
+  `http://localhost:${PORT}`,
+].filter(Boolean);
 
 app.use('/api', cors({
   origin: (origin, cb) => {
