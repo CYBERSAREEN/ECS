@@ -60,6 +60,7 @@ app.use((req, res, next) => {
   res.locals.siteUrl = (process.env.SITE_URL || defaultUrl).replace(/\/$/, '');
   res.locals.pagePath = req.path === '/' ? '/' : req.path.replace(/\/$/, '');
   res.locals.gaId = process.env.GA_MEASUREMENT_ID || '';
+  res.locals.assetV = require('./package.json').version;
   res.locals.robotsMeta = req.path.startsWith('/vadmin') ? 'noindex, nofollow' : '';
   next();
 });
