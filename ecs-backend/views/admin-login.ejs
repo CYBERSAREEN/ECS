@@ -30,8 +30,9 @@
     var err = document.getElementById('loginErr');
     err.style.display = 'none';
     try {
-      var res = await fetch('/api/admin/login', { method:'POST', headers:{'Content-Type':'application/json'}, credentials:'include', body: JSON.stringify({ username:f.username.value, password:f.password.value }) });
+      var res = await fetch('/api/admin/login', { method:'POST', headers:{'Content-Type':'application/json'}, credentials:'include', body: JSON.stringify({ username:f.username.value.trim(), password:f.password.value.trim() }) });
       if (res.ok) { window.location.href = '/vadmin-db7180/dashboard'; }
+      else if (res.status === 429) { err.textContent = 'Too many attempts — locked for 15 minutes. Wait and try again.'; err.style.display = 'block'; }
       else { err.textContent = 'Invalid credentials. Please try again.'; err.style.display = 'block'; }
     } catch(e2) { err.textContent = 'Authentication service unavailable.'; err.style.display = 'block'; }
   });
