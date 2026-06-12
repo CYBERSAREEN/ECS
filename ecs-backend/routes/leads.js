@@ -32,4 +32,12 @@ router.patch('/:id', requireAdmin, async (req, res) => {
   return res.json(data);
 });
 
+// DELETE /api/leads/:id — admin only
+router.delete('/:id', requireAdmin, async (req, res) => {
+  if (!supabase) return res.status(503).json({ error: 'Database not configured' });
+  const { error } = await supabase.from('leads').delete().eq('id', req.params.id);
+  if (error) { console.error("DB error:", error.message); return res.status(500).json({ error: "Database error" }); }
+  return res.status(204).send();
+});
+
 module.exports = router;

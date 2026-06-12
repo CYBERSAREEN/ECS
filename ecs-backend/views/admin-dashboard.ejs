@@ -15,7 +15,8 @@
           { id:'team', label:'Team', icon:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>' },
           { id:'projects', label:'Projects', icon:'<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>' },
           { id:'patents', label:'Patents', icon:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>' },
-          { id:'leads', label:'Leads', icon:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>' }
+          { id:'leads', label:'Leads', icon:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>' },
+          { id:'submissions', label:'Idea Submissions', icon:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/>' }
         ];
         nav.forEach(function(n, i){ %>
         <button class="<%= i===0 ? 'active' : '' %>" data-panel="<%= n.id %>">
@@ -49,12 +50,12 @@
       </div>
 
       <!-- Other panels -->
-      <% ['services','team','projects','patents','leads'].forEach(function(p){ %>
+      <% ['services','team','projects','patents','leads','submissions'].forEach(function(p){ %>
         <div data-panel-content="<%= p %>" style="display:none;">
           <div class="table-wrap">
             <div class="table-wrap__head">
-              <h3 style="text-transform:capitalize;"><%= p %></h3>
-              <% if(p !== 'leads'){ %><button class="btn btn-primary" data-add="<%= p %>" style="padding:8px 16px;font-size:.82rem;">+ Add</button><% } %>
+              <h3 style="text-transform:capitalize;"><%= p === 'submissions' ? 'Patent Idea Submissions' : p %></h3>
+              <% if(p !== 'leads' && p !== 'submissions'){ %><button class="btn btn-primary" data-add="<%= p %>" style="padding:8px 16px;font-size:.82rem;">+ Add</button><% } %>
             </div>
             <div id="form-<%= p %>" style="display:none;padding:20px 24px;border-bottom:1px solid var(--border);"></div>
             <table>
@@ -109,9 +110,9 @@
 
   function renderLeads(leads){
     document.getElementById('head-leads').innerHTML =
-      '<th>Name</th><th>Service / Query</th><th>Contact</th><th>Status</th><th>Reply</th>';
+      '<th>Name</th><th>Service / Query</th><th>Contact</th><th>Status</th><th>Reply</th><th></th>';
     if(!leads.length){
-      document.getElementById('rows-leads').innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted-2);padding:32px;">No leads yet.</td></tr>';
+      document.getElementById('rows-leads').innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted-2);padding:32px;">No leads yet.</td></tr>';
       return;
     }
     document.getElementById('rows-leads').innerHTML = leads.map(function(x){
@@ -127,6 +128,7 @@
         + '<td><div style="font-size:.8rem;">' + esc(x.email) + '</div><div style="color:var(--muted-2);font-size:.78rem;">' + esc(x.phone || '') + '</div></td>'
         + '<td>' + sel + '</td>'
         + '<td>' + wa + '</td>'
+        + '<td><button class="lead-del" data-id="' + esc(x.id) + '" style="color:#c0392b;font-size:.78rem;font-weight:600;">Delete</button></td>'
         + '</tr>';
     }).join('');
     document.querySelectorAll('.lead-status').forEach(function(sel){
@@ -138,7 +140,59 @@
         }).catch(function(){});
       });
     });
+    document.querySelectorAll('.lead-del').forEach(function(b){
+      b.addEventListener('click', async function(){
+        if (!confirm('Delete this lead permanently?')) return;
+        await fetch('/api/leads/' + b.getAttribute('data-id'), { method:'DELETE', credentials:'include' }).catch(function(){});
+        var l = await load('/api/leads');
+        if (Array.isArray(l)) { renderLeads(l); document.getElementById('leadCount').textContent = l.length; }
+      });
+    });
   }
+
+  // ── Patent idea submissions panel ──
+  var SUB_STATUSES = ['received','reviewing','filed','rejected'];
+  async function renderSubmissions(){
+    var subs = await load('/api/patents/submissions');
+    document.getElementById('head-submissions').innerHTML =
+      '<th>Submitter</th><th>Patent Title</th><th>Date</th><th>Status</th><th>PDF</th><th></th>';
+    var tbody = document.getElementById('rows-submissions');
+    if (!Array.isArray(subs)) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted-2);padding:32px;">Could not load — check DB connection.</td></tr>'; return; }
+    if (!subs.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted-2);padding:32px;">No idea submissions yet.</td></tr>'; return; }
+    tbody.innerHTML = subs.map(function(x){
+      var sel = '<select class="select sub-status" data-id="' + esc(x.id) + '" style="padding:6px 10px;font-size:.8rem;">'
+        + SUB_STATUSES.map(function(s){ return '<option' + (s === x.status ? ' selected' : '') + '>' + s + '</option>'; }).join('')
+        + '</select>';
+      var pdf = x.file_url
+        ? '<a class="btn btn-secondary" style="padding:6px 12px;font-size:.78rem;white-space:nowrap;" target="_blank" rel="noopener" href="/api/patents/submissions/' + esc(x.id) + '/file">Download</a>'
+        : '<span style="color:var(--muted-2);font-size:.78rem;">none</span>';
+      return '<tr>'
+        + '<td><div style="color:var(--ink);">' + esc(x.submitter_name) + '</div><div style="color:var(--muted-2);font-size:.76rem;">' + esc(x.organization || '') + '</div></td>'
+        + '<td style="max-width:300px;">' + esc(x.patent_title) + '</td>'
+        + '<td style="font-size:.8rem;white-space:nowrap;">' + esc(String(x.created_at || '').slice(0, 10)) + '</td>'
+        + '<td>' + sel + '</td>'
+        + '<td>' + pdf + '</td>'
+        + '<td><button class="sub-del" data-id="' + esc(x.id) + '" style="color:#c0392b;font-size:.78rem;font-weight:600;">Delete</button></td>'
+        + '</tr>';
+    }).join('');
+    tbody.querySelectorAll('.sub-status').forEach(function(sel){
+      sel.addEventListener('change', function(){
+        fetch('/api/patents/submissions/' + sel.getAttribute('data-id'), {
+          method: 'PATCH', credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: sel.value })
+        }).catch(function(){});
+      });
+    });
+    tbody.querySelectorAll('.sub-del').forEach(function(b){
+      b.addEventListener('click', async function(){
+        if (!confirm('Delete this submission (and its PDF) permanently?')) return;
+        await fetch('/api/patents/submissions/' + b.getAttribute('data-id'), { method:'DELETE', credentials:'include' }).catch(function(){});
+        renderSubmissions();
+      });
+    });
+  }
+  renderSubmissions();
 
   // ── Generic CRUD for services / team / projects / patents ──
   var ENTITIES = {
@@ -181,11 +235,12 @@
       fields: [
         { name: 'application_number', label: 'Application #', required: true },
         { name: 'title', label: 'Title', required: true },
-        { name: 'status', label: 'Status', type: 'select', options: ['Pending','Approved','Rejected'], required: true },
+        { name: 'status', label: 'Status', type: 'select', options: ['Pending','Filed','Approved','Rejected'], required: true },
         { name: 'date', label: 'Date', type: 'date', required: true },
         { name: 'ref_no', label: 'Ref no' },
         { name: 'patent_code', label: 'Patent code' },
-        { name: 'sdg', label: 'SDG alignment' }
+        { name: 'sdg', label: 'SDG alignment' },
+        { name: 'pdf_url', label: 'PDF link (e.g. /patents/file.pdf)' }
       ]
     }
   };

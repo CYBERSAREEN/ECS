@@ -102,12 +102,26 @@
       </div>
       <div class="grid grid-2">
         <%
-          var svcs = [
+          var catIcons = {
+            web_dev:     '<circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20"/>',
+            security:    '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+            ai:          '<path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-5 0V4.5A2.5 2.5 0 0 1 9.5 2zM14.5 2A2.5 2.5 0 0 0 12 4.5"/>',
+            consultancy: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/>'
+          };
+          var catShort = { web_dev:'Web Development', security:'Security & WAPT', ai:'AI Solutions', consultancy:'Consultancy' };
+          var svcs;
+          if (typeof dbServices !== 'undefined' && dbServices.length) {
+            svcs = dbServices.map(function(s){
+              return { title: s.title, short: catShort[s.category] || s.category, badge: s.badge || '', detail: s.description, icon: catIcons[s.category] || catIcons.web_dev };
+            });
+          } else {
+            svcs = [
             { title:'Web Development', short:'Secure-by-design static & dynamic websites', badge:'', detail:'Owning a business without a digital presence is leaving revenue on the table. We build scalable static and dynamic websites engineered for performance, security, and growth — no shortcuts, no vibe-coded vulnerabilities.', icon:'<circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20"/>' },
             { title:'WAPT', short:'Web Application Penetration Testing', badge:'', detail:'Automated scanners find yesterday&apos;s problems. Our AI-assisted WAPT generates faster, more reliable vulnerability reports with zero surface disclosure — a true attacker&apos;s view with actionable, prioritised remediation.', icon:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>' },
             { title:'AI-Based Cyber Tutor', short:'Patent-pending personalized security learning', badge:'Coming Soon', detail:'A patent-pending AI tutor that adapts to your learning pace and teaches cybersecurity dynamically. Personalized roadmaps, real-world scenarios, zero generic curriculum.', icon:'<path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-5 0V4.5A2.5 2.5 0 0 1 9.5 2zM14.5 2A2.5 2.5 0 0 0 12 4.5"/>' },
             { title:'Startup Consultancy', short:'CRM, dashboards & operational backbone', badge:'', detail:'From CRM dashboards and lead-management systems to admin panels, attendance management, and structured courses — we help startups build the operational backbone they need to scale from Day 1.', icon:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/>' }
-          ];
+            ];
+          }
           svcs.forEach(function(s, i){ %>
           <div class="card svc reveal" data-accordion-item data-delay="<%= i % 2 %>">
             <button class="svc__head" data-accordion>
@@ -140,11 +154,19 @@
       </div>
       <div class="grid grid-3">
         <%
-          var team = [
+          var team;
+          if (typeof dbTeam !== 'undefined' && dbTeam.length) {
+            team = dbTeam.map(function(m){
+              var ini = m.initials || (m.name || '').split(/\s+/).map(function(w){ return w[0]; }).join('').slice(0,2).toUpperCase();
+              return { name: m.name, role: m.role, photo: m.photo_url || '', initials: ini, bio: m.bio || '' };
+            });
+          } else {
+            team = [
             { name:'Vedant Sareen', role:'Director & CTO', photo:'/img/team/vedant.jpeg', initials:'VS', bio:'Penetration tester, web developer, AI automation engineer, Red Teamer & VAPT specialist. Ex-EY Senior Security Analyst. Patent holder for PenBox DMAS.' },
             { name:'Suneha Passi', role:'Senior Web Developer', photo:'/img/team/suneha.jpeg', initials:'SP', bio:'Full-stack web designer, prompt engineer, and project team lead. Delivering pixel-perfect, accessible interfaces at scale.' },
             { name:'Hardik Garg', role:'Lead Cybersecurity Analyst', photo:'/img/team/hardik.jpeg', initials:'HG', bio:'Deep expertise in red teaming, cloud security, DevSecOps, and bug bounty. Penetration tester with systemic attack-path analysis.' }
-          ];
+            ];
+          }
           team.forEach(function(m, i){ %>
           <div class="card team-card reveal" data-delay="<%= i %>">
             <div class="team-avatar">

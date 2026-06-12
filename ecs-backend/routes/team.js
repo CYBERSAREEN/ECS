@@ -9,7 +9,7 @@ const validateMember = [
   body('name').trim().notEmpty().isLength({ max: 120 }).escape(),
   body('role').trim().notEmpty().isLength({ max: 120 }).escape(),
   body('bio').trim().isLength({ max: 1000 }).escape(),
-  body('photo_url').trim().isURL().optional({ nullable: true, checkFalsy: true }),
+  body('photo_url').trim().custom(v => /^\/[\w\-./]+$/.test(v) || /^https:\/\/[^\s]+$/.test(v)).withMessage('Use a site path (/img/team/x.jpeg) or https URL').optional({ nullable: true, checkFalsy: true }),
   body('initials').trim().isLength({ max: 4 }).escape().optional({ nullable: true, checkFalsy: true }),
 ];
 

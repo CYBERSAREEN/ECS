@@ -22,79 +22,66 @@
         <p>Click a patent to expand full details.</p>
       </div>
 
-      <div class="card patent reveal" data-accordion-item>
+      <%
+        var pats;
+        if (typeof dbPatents !== 'undefined' && dbPatents.length) {
+          pats = dbPatents;
+        } else {
+          pats = [
+            { application_number:'202611069735', status:'Approved', title:'PENBOX-DMAS: A Distributed Multi-Agent Security Appliance for Autonomous Vulnerability Assessment and Remediation at the Edge', date:'2026-04-29', ref_no:'UTI4236', patent_code:'UPTRAYAMBAK260519-4236', sdg:'Industry, Innovation, and Infrastructure', pdf_url:'/patents/penbox-dmas.pdf',
+              inventors:[{ name:'Vedant Sareen', designation:'Student', dept:'Computer Science & Engineering', email:'vedant1318.be23@chitkara.edu.in' },{ name:'Dr. Himanshi Babbar', designation:'Assistant Professor', dept:'Computer Science & Engineering', email:'himanshi.babbar@chitkara.edu.in' }] },
+            { application_number:'202611055845', status:'Filed', title:'Artificial Intelligence Based Learning and Skill Assessment Platform for Cybersecurity', date:'2025-12-01', ref_no:'UTI3812', patent_code:'UPENBL260310-3812', sdg:'Industry, Innovation, and Infrastructure', pdf_url:'/patents/ai-cyber-tutor.pdf',
+              inventors:[{ name:'Vedant Sareen', designation:'Student', dept:'Computer Science & Engineering', email:'vedant1318.be23@chitkara.edu.in' },{ name:'Dr. Himanshi Babbar', designation:'Assistant Professor', dept:'CURIN, Chitkara University', email:'himanshi.babbar916@gmail.com' }] }
+          ];
+        }
+        function fmtDate(d){
+          if (!d) return '';
+          var dt = new Date(d);
+          if (isNaN(dt)) return d;
+          var m = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+          return String(dt.getUTCDate()).padStart(2,'0') + '-' + m[dt.getUTCMonth()] + '-' + dt.getUTCFullYear();
+        }
+        pats.forEach(function(p, pi){
+          var invs = Array.isArray(p.inventors) ? p.inventors : [];
+      %>
+      <div class="card patent reveal" data-accordion-item <% if (pi > 0) { %>style="margin-top:18px;"<% } %>>
         <button class="patent__head" data-accordion>
           <span style="flex:1;">
             <span style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px;">
-              <span class="status-pill"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Approved</span>
-              <span class="kv">App #202611069735</span>
+              <span class="status-pill"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> <%- p.status %></span>
+              <span class="kv">App #<%- p.application_number %></span>
             </span>
-            <h3 style="font-size:1.05rem;line-height:1.4;">PENBOX-DMAS: A Distributed Multi-Agent Security Appliance for Autonomous Vulnerability Assessment and Remediation at the Edge</h3>
-            <p class="kv" style="margin-top:8px;">Date: 29-APR-2026 &nbsp;·&nbsp; Ref: UTI4236</p>
+            <h3 style="font-size:1.05rem;line-height:1.4;"><%- p.title %></h3>
+            <p class="kv" style="margin-top:8px;">Date: <%= fmtDate(p.date) %><% if (p.ref_no) { %> &nbsp;·&nbsp; Ref: <%- p.ref_no %><% } %></p>
           </span>
           <svg class="svc__chev" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
         </button>
         <div class="patent__body"><div class="patent__body-inner">
           <div class="grid grid-2" style="gap:16px;margin-bottom:20px;">
-            <div><span class="kv">PATENT CODE</span><p style="color:var(--charcoal);font-size:.9rem;margin-top:4px;">UPTRAYAMBAK260519-4236</p></div>
-            <div><span class="kv">SDG ALIGNMENT</span><p style="color:var(--charcoal);font-size:.9rem;margin-top:4px;">Industry, Innovation, and Infrastructure</p></div>
+            <% if (p.patent_code) { %><div><span class="kv">PATENT CODE</span><p style="color:var(--charcoal);font-size:.9rem;margin-top:4px;"><%- p.patent_code %></p></div><% } %>
+            <% if (p.sdg) { %><div><span class="kv">SDG ALIGNMENT</span><p style="color:var(--charcoal);font-size:.9rem;margin-top:4px;"><%- p.sdg %></p></div><% } %>
           </div>
+          <% if (invs.length) { %>
           <span class="kv">INVENTORS</span>
           <div class="grid grid-2" style="gap:12px;margin-top:8px;">
+            <% invs.forEach(function(inv){ %>
             <div class="inv-card">
-              <p style="font-weight:700;color:var(--charcoal-2);font-size:.9rem;">Vedant Sareen</p>
-              <p style="font-size:.78rem;margin-top:2px;">Student · Computer Science &amp; Engineering</p>
-              <p style="font-size:.78rem;margin-top:2px;word-break:break-all;">vedant1318.be23@chitkara.edu.in</p>
+              <p style="font-weight:700;color:var(--charcoal-2);font-size:.9rem;"><%= inv.name %></p>
+              <% if (inv.designation || inv.dept) { %><p style="font-size:.78rem;margin-top:2px;"><%= [inv.designation, inv.dept].filter(Boolean).join(' · ') %></p><% } %>
+              <% if (inv.email) { %><p style="font-size:.78rem;margin-top:2px;word-break:break-all;"><%= inv.email %></p><% } %>
             </div>
-            <div class="inv-card">
-              <p style="font-weight:700;color:var(--charcoal-2);font-size:.9rem;">Dr. Himanshi Babbar</p>
-              <p style="font-size:.78rem;margin-top:2px;">Assistant Professor · Computer Science &amp; Engineering</p>
-              <p style="font-size:.78rem;margin-top:2px;word-break:break-all;">himanshi.babbar@chitkara.edu.in</p>
-            </div>
+            <% }); %>
           </div>
-          <a href="/patents/penbox-dmas.pdf" download class="btn btn-primary" style="margin-top:20px;padding:10px 18px;font-size:.85rem;">
+          <% } %>
+          <% if (p.pdf_url) { %>
+          <a href="<%= p.pdf_url %>" download class="btn btn-primary" style="margin-top:20px;padding:10px 18px;font-size:.85rem;">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
             Download Patent PDF
           </a>
+          <% } %>
         </div></div>
       </div>
-
-      <div class="card patent reveal" data-accordion-item style="margin-top:18px;">
-        <button class="patent__head" data-accordion>
-          <span style="flex:1;">
-            <span style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px;">
-              <span class="status-pill"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Filed</span>
-              <span class="kv">App #202611055845</span>
-            </span>
-            <h3 style="font-size:1.05rem;line-height:1.4;">Artificial Intelligence Based Learning and Skill Assessment Platform for Cybersecurity</h3>
-            <p class="kv" style="margin-top:8px;">Date: 01-DEC-2025 &nbsp;·&nbsp; Ref: UTI3812</p>
-          </span>
-          <svg class="svc__chev" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-        </button>
-        <div class="patent__body"><div class="patent__body-inner">
-          <div class="grid grid-2" style="gap:16px;margin-bottom:20px;">
-            <div><span class="kv">PATENT CODE</span><p style="color:var(--charcoal);font-size:.9rem;margin-top:4px;">UPENBL260310-3812</p></div>
-            <div><span class="kv">SDG ALIGNMENT</span><p style="color:var(--charcoal);font-size:.9rem;margin-top:4px;">Industry, Innovation, and Infrastructure</p></div>
-          </div>
-          <span class="kv">INVENTORS</span>
-          <div class="grid grid-2" style="gap:12px;margin-top:8px;">
-            <div class="inv-card">
-              <p style="font-weight:700;color:var(--charcoal-2);font-size:.9rem;">Vedant Sareen</p>
-              <p style="font-size:.78rem;margin-top:2px;">Student · Computer Science &amp; Engineering</p>
-              <p style="font-size:.78rem;margin-top:2px;word-break:break-all;">vedant1318.be23@chitkara.edu.in</p>
-            </div>
-            <div class="inv-card">
-              <p style="font-weight:700;color:var(--charcoal-2);font-size:.9rem;">Dr. Himanshi Babbar</p>
-              <p style="font-size:.78rem;margin-top:2px;">Assistant Professor · CURIN, Chitkara University</p>
-              <p style="font-size:.78rem;margin-top:2px;word-break:break-all;">himanshi.babbar916@gmail.com</p>
-            </div>
-          </div>
-          <a href="/patents/ai-cyber-tutor.pdf" download class="btn btn-primary" style="margin-top:20px;padding:10px 18px;font-size:.85rem;">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-            Download Patent PDF
-          </a>
-        </div></div>
-      </div>
+      <% }); %>
     </div>
   </section>
 
@@ -109,8 +96,9 @@
           <div class="field"><label>Your Name *</label><input class="input" name="submitter_name" required /></div>
           <div class="field"><label>Organization / Designation</label><input class="input" name="organization" /></div>
           <div class="field"><label>Patent Title *</label><input class="input" name="patent_title" required /></div>
-          <div class="field"><label>Patent Idea (PDF/DOC)</label><input class="input" type="file" accept=".pdf,.doc,.docx" /></div>
+          <div class="field"><label>Patent Idea (PDF only, max 4 MB)</label><input class="input" type="file" name="file" accept="application/pdf,.pdf" /></div>
           <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">Submit Patent Idea</button>
+          <p id="patentErr" style="text-align:center;color:#c0392b;font-size:.85rem;margin-top:14px;display:none;"></p>
           <p id="patentMsg" style="text-align:center;color:var(--red);font-size:.85rem;margin-top:14px;display:none;">Idea received! We&apos;ll review within 48 hours.</p>
         </form>
       </div>
@@ -122,8 +110,40 @@
   document.getElementById('patentForm').addEventListener('submit', async function(e){
     e.preventDefault();
     var f = e.target;
-    var body = { submitter_name: f.submitter_name.value, organization: f.organization.value, patent_title: f.patent_title.value };
-    try { await fetch('/api/patents/submit', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) }); } catch(err){}
+    var errEl = document.getElementById('patentErr');
+    errEl.style.display = 'none';
+
+    var fileInput = f.querySelector('input[type="file"]');
+    var file = fileInput.files[0];
+    if (file) {
+      if (!/\.pdf$/i.test(file.name) || (file.type && file.type !== 'application/pdf')) {
+        errEl.textContent = 'Only PDF files are accepted.'; errEl.style.display = 'block'; return;
+      }
+      if (file.size > 4 * 1024 * 1024) {
+        errEl.textContent = 'PDF too large — maximum 4 MB.'; errEl.style.display = 'block'; return;
+      }
+    }
+    if (!f.submitter_name.value.trim() || !f.patent_title.value.trim()) {
+      errEl.textContent = 'Name and patent title are required.'; errEl.style.display = 'block'; return;
+    }
+
+    var fd = new FormData();
+    fd.append('submitter_name', f.submitter_name.value.trim());
+    fd.append('organization', f.organization.value.trim());
+    fd.append('patent_title', f.patent_title.value.trim());
+    if (file) fd.append('file', file);
+
+    try {
+      var res = await fetch('/api/patents/submit', { method:'POST', body: fd });
+      if (!res.ok) {
+        var j = await res.json().catch(function(){ return {}; });
+        errEl.textContent = j.error || (j.errors && j.errors[0] && j.errors[0].msg) || 'Submission failed — try again.';
+        errEl.style.display = 'block';
+        return;
+      }
+    } catch(err){
+      errEl.textContent = 'Network error — try again.'; errEl.style.display = 'block'; return;
+    }
     f.style.display = 'none';
     document.getElementById('patentMsg').style.display = 'block';
   });

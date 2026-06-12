@@ -35,6 +35,31 @@
     </div>
   </section>
 
+  <% if (typeof dbTeam !== 'undefined' && dbTeam.length) { %>
+  <!-- Team (managed from admin dashboard) -->
+  <section class="section">
+    <div class="container" style="max-width:1000px;">
+      <div class="section-head reveal">
+        <span class="eyebrow">THE TEAM</span>
+        <h2>Meet Our Team</h2>
+      </div>
+      <div class="grid grid-3">
+        <% dbTeam.forEach(function(m, i){
+             var ini = m.initials || (m.name || '').split(/\s+/).map(function(w){ return w[0]; }).join('').slice(0,2).toUpperCase(); %>
+          <div class="card team-card reveal" data-delay="<%= i % 3 %>">
+            <div class="team-avatar">
+              <% if (m.photo_url) { %><img src="<%= m.photo_url %>" alt="<%- m.name %>" /><% } else { %><div class="initials"><%= ini %></div><% } %>
+            </div>
+            <h3><%- m.name %></h3>
+            <div class="role"><%- m.role %></div>
+            <p><%- m.bio || '' %></p>
+          </div>
+        <% }); %>
+      </div>
+    </div>
+  </section>
+  <% } %>
+
   <!-- Mission & Vision -->
   <section class="section">
     <div class="container" style="max-width:900px;">

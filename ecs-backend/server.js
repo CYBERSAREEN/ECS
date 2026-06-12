@@ -91,6 +91,7 @@ app.use('/api', rateLimit({
 app.disable('x-powered-by');
 
 // ── API routes ────────────────────────────────────────────────
+app.use('/api', require('./middleware/securityGuard'));
 app.use('/api/admin',    require('./routes/admin'));
 app.use('/api/contact',  require('./routes/contact'));
 app.use('/api/leads',    require('./routes/leads'));
@@ -131,11 +132,29 @@ Sitemap: ${res.locals.siteUrl}/sitemap.xml`);
 });
 
 // ── PAGE ROUTES (EJS) ─────────────────────────────────────────
-app.get('/',         (req, res) => res.render('index'));
-app.get('/services', (req, res) => res.render('services'));
+// Pages render dashboard-managed content from Supabase; views fall back
+// to static content when the DB is unreachable or a table is empty.
+const dbClient = require('./config/supabase');
+async function dbRows(table, orderCol = 'sort_order', ascending = true) {
+  if (!dbClient) return [];
+  try {
+    const { data, error } = await dbClient.from(table).select('*').order(orderCol, { ascending });
+    if (error) { console.error(`DB read ${table}:`, error.message); return []; }
+    return data || [];
+  } catch (e) { console.error(`DB read ${table}:`, e.message); return []; }
+}
+
+app.get('/', async (req, res) => {
+  const [dbServices, dbTeam] = await Promise.all([dbRows('services'), dbRows('team_members')]);
+  res.render('index', { dbServices, dbTeam });
+});
+app.get('/services', async (req, res) => res.render('services', { dbServices: await dbRows('services') }));
 app.get('/projects', (req, res) => res.render('projects'));
-app.get('/about',    (req, res) => res.render('about'));
-app.get('/ideas',    (req, res) => res.render('ideas'));
+app.get('/about',    async (req, res) => res.render('about', { dbTeam: await dbRows('team_members') }));
+app.get('/ideas',    async (req, res) => {
+  const dbPatents = (await dbRows('patents', 'date', false)).filter(p => p.status !== 'Rejected');
+  res.render('ideas', { dbPatents });
+});
 app.get('/contact',  (req, res) => res.render('contact'));
 app.get('/scan',     (req, res) => res.render('scan'));
 

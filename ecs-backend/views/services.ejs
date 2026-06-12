@@ -13,6 +13,29 @@
     </div>
   </header>
 
+  <% if (typeof dbServices !== 'undefined' && dbServices.length) { %>
+  <!-- Featured services (managed from admin dashboard) -->
+  <section class="section">
+    <div class="container" style="max-width:980px;">
+      <div class="section-head reveal">
+        <span class="eyebrow">FEATURED</span>
+        <h2>What We Offer</h2>
+      </div>
+      <div class="grid grid-2">
+        <% dbServices.forEach(function(s, i){ %>
+          <div class="card reveal" data-delay="<%= i % 2 %>">
+            <span class="svc__title-row" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+              <h3><%- s.title %></h3>
+              <% if (s.badge) { %><span class="badge-mini"><%- s.badge %></span><% } %>
+            </span>
+            <p style="margin-top:10px;"><%- s.description %></p>
+          </div>
+        <% }); %>
+      </div>
+    </div>
+  </section>
+  <% } %>
+
   <%
     var web = ["E-Commerce Website","Jewelry Website","Portfolio Website","Service Website","Business Website","School Website","Blog Website","News Portal","Job Portals","Multi-Vendor Website","Salon / Gym / Spa Website","Real Estate Website","Handbags / Wallet Website","Clothing Website","Electronic Appliances Website","Old Laptops Selling Website"];
     var sec = ["Web Application Penetration Testing","API Security Testing","Vulnerability Assessment","OWASP Top 10 Security Testing","Authentication & Authorization Testing","Source Code Security Review","Secure Code Review","Black Box Penetration Testing","Grey Box Penetration Testing","White Box Penetration Testing","DevSecOps Security Review","CI/CD Pipeline Security Assessment","Bug Bounty Program Assistance","Phishing Simulation Campaigns","Security Awareness Training","Security Consulting","Cyber Risk Assessment","Startup Security Audits","E-Commerce Security Testing","CMS Security Testing (WordPress, Shopify, Drupal)","AI Application Security Testing","LLM & Agent Security Assessment"];
