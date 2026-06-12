@@ -36,3 +36,9 @@ tmp/
 
 # Local secrets notes — NEVER commit
 tokens.md
+
+# Session logs / local-only workspaces — NEVER commit (contain secrets)
+claude file /
+.claude/
+ecs-web/
+test.md

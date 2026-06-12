@@ -132,48 +132,71 @@
     });
   }
 
-  /* ---------- GSAP layer (ScrollTrigger) — IO fallback kept ---------- */
-  function initGsap() {
-    if (!window.gsap || !window.ScrollTrigger) return false;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return false;
-    gsap.registerPlugin(ScrollTrigger);
-    document.body.classList.add("gsap-on");
+  /* ---------- Theme switcher ---------- */
+  function initThemeSwitcher() {
+    var fab = document.getElementById("themeFab");
+    if (!fab) return;
+    var toggle = document.getElementById("themeToggle");
+    var panel = document.getElementById("themePanel");
+    var opts = fab.querySelectorAll("[data-theme-pick]");
 
-    var hero = document.querySelector(".hero__inner");
-    if (hero) {
-      var intro = gsap.timeline({ defaults: { ease: "power3.out" }, delay: 0.25 });
-      var pick = function (sel) { return hero.querySelectorAll(sel); };
-      intro
-        .from(pick(".hero__badge"), { y: 20, opacity: 0, duration: 0.5 })
-        .from(pick("h1"), { y: 36, opacity: 0, duration: 0.7 }, "-=0.25")
-        .from(pick(".hero__sub, .hero__type"), { y: 24, opacity: 0, duration: 0.55, stagger: 0.12 }, "-=0.35")
-        .from(pick(".hero__cta .btn"), { y: 18, opacity: 0, duration: 0.45, stagger: 0.1 }, "-=0.25")
-        .from(pick(".hero__stats .stat"), { y: 22, opacity: 0, duration: 0.5, stagger: 0.12 }, "-=0.2");
+    function current() {
+      return document.documentElement.getAttribute("data-theme") || "editorial";
+    }
+    function markActive() {
+      var c = current();
+      opts.forEach(function (o) {
+        o.classList.toggle("active", o.getAttribute("data-theme-pick") === c);
+      });
+    }
+    function apply(name) {
+      if (name === "editorial") document.documentElement.removeAttribute("data-theme");
+      else document.documentElement.setAttribute("data-theme", name);
+      try { localStorage.setItem("ecs-theme", name); } catch (e) {}
+      markActive();
     }
 
-    document.querySelectorAll("section:not(.hero), .page-header").forEach(function (sec) {
-      var items = sec.querySelectorAll(".reveal");
-      if (!items.length) return;
-      gsap.from(items, {
-        y: 40, opacity: 0, duration: 0.75, ease: "power3.out",
-        stagger: 0.12,
-        scrollTrigger: { trigger: sec, start: "top 78%", once: true },
+    toggle.addEventListener("click", function (e) {
+      e.stopPropagation();
+      var open = panel.classList.toggle("open");
+      toggle.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+    opts.forEach(function (o) {
+      o.addEventListener("click", function () {
+        apply(o.getAttribute("data-theme-pick"));
       });
     });
-
-    document.querySelectorAll("[data-count]").forEach(function (el) {
-      var target = parseInt(el.getAttribute("data-count"), 10) || 0;
-      var suffix = el.getAttribute("data-suffix") || "";
-      var obj = { v: 0 };
-      gsap.to(obj, {
-        v: target, duration: 1.6, ease: "power2.out",
-        snap: { v: 1 },
-        onUpdate: function () { el.textContent = obj.v + suffix; },
-        scrollTrigger: { trigger: el, start: "top 88%", once: true },
-      });
+    document.addEventListener("click", function (e) {
+      if (!fab.contains(e.target)) {
+        panel.classList.remove("open");
+        toggle.setAttribute("aria-expanded", "false");
+      }
     });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") {
+        panel.classList.remove("open");
+        toggle.setAttribute("aria-expanded", "false");
+      }
+    });
+    markActive();
+  }
 
-    return true;
+  /* ---------- Failsafe: never leave content hidden ---------- */
+  function revealFailsafe() {
+    // If anything is still un-revealed after a while (IO edge cases, frozen
+    // tabs, exotic browsers), force it visible. Content > animation.
+    setTimeout(function () {
+      document.querySelectorAll(".reveal:not(.in)").forEach(function (r) {
+        var rect = r.getBoundingClientRect();
+        if (rect.top < window.innerHeight + 60) r.classList.add("in");
+      });
+    }, 1500);
+    setTimeout(function () {
+      // Observer clearly broken (nothing revealed at all) → show everything.
+      if (!document.querySelector(".reveal.in")) {
+        document.querySelectorAll(".reveal").forEach(function (r) { r.classList.add("in"); });
+      }
+    }, 4000);
   }
 
   document.addEventListener("DOMContentLoaded", function () {
@@ -181,10 +204,12 @@
     initLoader();
     initNavbar();
     initTypewriter();
-    if (!initGsap()) initObserver();
+    initObserver();
+    revealFailsafe();
     initAccordions();
     initTabs();
     initRadioCards();
+    initThemeSwitcher();
   });
 })();
 

@@ -4,7 +4,7 @@
   <!-- Sidebar -->
   <aside class="admin-side" id="adminSide">
     <div class="admin-side__top">
-      <img src="/brand/logo-dark-2x.png" alt="ECS" onerror="this.src='/brand/icon-dark-128px.png';this.style.height='30px';" />
+      <img src="/brand/ecs-shield-cream.svg" alt="ECS" style="height:38px;" />
       <p>Admin Panel</p>
     </div>
     <nav class="admin-nav">
@@ -39,7 +39,7 @@
     <div class="admin-content">
       <!-- Overview -->
       <div data-panel-content="overview">
-        <h2 style="font-size:1.5rem;margin-bottom:20px;">Dashboard Overview</h2>
+        <h2 style="margin-bottom:24px;">Dashboard Overview</h2>
         <div class="grid grid-4" style="margin-bottom:24px;">
           <% [['Services','svcCount'],['Team','teamCount'],['Projects','projCount'],['Leads','leadCount']].forEach(function(s){ %>
             <div class="card stat-card"><span class="card__icon" style="margin:0;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/></svg></span><div><div class="num" id="<%= s[1] %>">—</div><div class="lbl"><%= s[0] %></div></div></div>

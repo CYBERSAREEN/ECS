@@ -1,0 +1,103 @@
+name: ECS CI/CD
+
+# Free-tier pipeline (GitHub Actions, 2,000 min/mo).
+# Gates every push/PR: syntax, dependency audit, secret scan, SAST.
+# Deploy jobs are wired but gated on a repo secret so they stay dormant
+# until you connect Render/Vercel (see DEPLOY-NOTES at the bottom).
+
+on:
+  push:
+    branches: [main, test]
+  pull_request:
+    branches: [main, test]
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-check:
+    name: Build & Static Checks
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ecs-backend
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: ecs-backend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Syntax check (server + routes + services)
+        run: |
+          node --check server.js
+          for f in routes/*.js services/*.js config/*.js middleware/*.js; do
+            [ -f "$f" ] && node --check "$f"
+          done
+
+      - name: Build
+        run: npm run build
+
+      - name: Dependency audit (high+)
+        run: npm audit --audit-level=high
+
+  secret-scan:
+    name: Secret Scan (gitleaks)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITLEAKS_ENABLE_UPLOAD_ARTIFACT: 'false'
+
+  sast:
+    name: SAST (Semgrep OSS)
+    runs-on: ubuntu-latest
+    container:
+      image: semgrep/semgrep
+    steps:
+      - uses: actions/checkout@v4
+      - name: Semgrep scan
+        run: semgrep --config p/ci --config p/nodejs --config p/owasp-top-ten --error --metrics off
+        continue-on-error: false
+
+  # ── DEPLOY (dormant until you opt in) ──────────────────────────────
+  # Enabled only when repo secret DEPLOY_ENABLED == 'true'. Until then these
+  # jobs are skipped, so the pipeline is purely a quality gate.
+  deploy-backend-render:
+    name: Deploy backend (Render)
+    needs: [build-and-check, secret-scan, sast]
+    if: github.ref == 'refs/heads/main' && vars.DEPLOY_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Render deploy
+        run: curl -fsSL -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
+
+  deploy-frontend-vercel:
+    name: Deploy frontend (Vercel)
+    needs: [build-and-check, secret-scan, sast]
+    if: github.ref == 'refs/heads/main' && vars.DEPLOY_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy to Vercel
+        run: npx vercel --prod --token "${{ secrets.VERCEL_TOKEN }}" --yes
+
+# ── DEPLOY-NOTES ───────────────────────────────────────────────────────
+# To activate deploys later (all free tier):
+#  1. Render: create the service, copy its Deploy Hook URL →
+#     repo Settings ▸ Secrets ▸ Actions ▸ new secret RENDER_DEPLOY_HOOK.
+#  2. Vercel: generate a token → secret VERCEL_TOKEN (only if you host a
+#     separate static/Next frontend there; the EJS app is one Render service).
+#  3. Set repo Variable DEPLOY_ENABLED = true (Settings ▸ Variables ▸ Actions).
+#  Rollback stays manual via Render/Vercel dashboards (instant rollback) —
+#  never hot-patch prod (per deploy-runbook).

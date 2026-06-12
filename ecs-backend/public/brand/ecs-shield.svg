@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="52" height="68" viewBox="0 0 52 68" fill="none">
+  <path d="M7 0H45C48.866 0 52 3.134 52 7V45L26 68L0 45V7C0 3.134 3.134 0 7 0Z" fill="#e94f37"/>
+  <text x="26" y="30" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="15" fill="#f6f7eb" letter-spacing="1.5">ECS</text>
+  <path d="M17 53L26 68L35 53Z" fill="#393e41" opacity="0.5"/>
+</svg>

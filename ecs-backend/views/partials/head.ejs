@@ -33,6 +33,7 @@
   <meta name="twitter:description" content="<%= _desc %>" />
   <meta name="twitter:image" content="<%= _siteUrl.replace(/\/$/, '') %>/brand/linkedin-banner-1584x396.png" />
 
+  <link rel="icon" type="image/svg+xml" href="/brand/favicon.svg" />
   <link rel="icon" type="image/png" href="/brand/icon-dark-64px.png" />
   <link rel="apple-touch-icon" href="/brand/icon-dark-128px.png" />
 
@@ -87,6 +88,18 @@
     window.ECS_GA = true;
   </script>
   <% } %>
+
+  <!-- Theme: apply saved palette before first paint (no flash) -->
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('ecs-theme');
+        if (t && ['editorial','ocean','forest','sand','mono','plum'].indexOf(t) !== -1 && t !== 'editorial') {
+          document.documentElement.setAttribute('data-theme', t);
+        }
+      } catch (e) {}
+    })();
+  </script>
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />

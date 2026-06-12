@@ -5,21 +5,21 @@
   <div class="ambient-glow" style="inset:0;"></div>
   <div class="admin-login__card">
     <div class="text-center" style="margin-bottom:28px;">
-      <img src="/brand/logo-dark-2x.png" alt="ECS" style="height:40px;margin:0 auto;" onerror="this.src='/brand/icon-dark-128px.png';this.style.height='48px';" />
+      <img src="/brand/ecs-shield-cream.svg" alt="ECS" style="height:56px;margin:0 auto;" />
     </div>
     <div class="admin-login__box">
       <div class="admin-login__head">
-        <span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
-        <div><h3 style="font-size:1.05rem;color:var(--ink);">Admin Access</h3><p style="font-size:.75rem;color:var(--muted-2);">Restricted area</p></div>
+        <span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+        <div><h3>Admin Access</h3><p>Restricted · Authorized only</p></div>
       </div>
       <form id="loginForm" autocomplete="off" novalidate>
         <div class="field"><label>Username</label><input class="input" name="username" autocomplete="off" required /></div>
         <div class="field"><label>Password</label><input class="input" type="password" name="password" autocomplete="off" required /></div>
-        <p id="loginErr" style="display:none;color:#ff6b6b;font-size:.8rem;background:rgba(255,107,107,.1);padding:8px 12px;border-radius:8px;margin-bottom:14px;"></p>
-        <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">Access Dashboard</button>
+        <p id="loginErr" class="admin-login__err"></p>
+        <button type="submit" class="btn btn-primary btn-lg" style="width:100%;justify-content:center;">Access Dashboard</button>
       </form>
     </div>
-    <p class="text-center" style="color:var(--muted-2);font-size:.75rem;margin-top:24px;">EXCELON CYBER SOLUTIONS © <%= new Date().getFullYear() %></p>
+    <p class="admin-login__foot">EXCELON CYBER SOLUTIONS © <%= new Date().getFullYear() %></p>
   </div>
 </div>
 
