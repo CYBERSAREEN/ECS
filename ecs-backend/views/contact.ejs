@@ -152,7 +152,7 @@
 <style>
 .contact-grid {
   display: grid;
-  grid-template-columns: 300px 1fr;
+  grid-template-columns: minmax(0, 320px) 1fr;
   gap: 40px;
   align-items: start;
 }
@@ -177,7 +177,7 @@
   flex-shrink: 0;
 }
 .il { font-family: var(--font-mono); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted-2); margin-bottom: 2px; }
-.iv { font-size: 0.92rem; color: var(--charcoal); word-break: break-word; }
+.iv { font-size: 0.88rem; color: var(--charcoal); overflow-wrap: anywhere; word-break: break-all; min-width: 0; }
 .iv:hover { color: var(--red); }
 
 .contact-wa-cta {

@@ -337,6 +337,17 @@ p  { color: var(--muted); font-size: 1.125rem; line-height: 1.75; }
 }
 @media (max-width: 768px) {
   .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  .section { padding: 72px 0; }
+  .container, .container-narrow { padding: 0 18px; }
+  .card { padding: 24px 20px; }
+}
+@media (max-width: 480px) {
+  .section { padding: 56px 0; }
+  .container, .container-narrow { padding: 0 14px; }
+  .card { padding: 20px 16px; }
+  .btn-lg { padding: 13px 20px; font-size: 0.95rem; }
+  h1 { font-size: clamp(2rem, 8vw, 3.5rem); }
+  h2 { font-size: clamp(1.5rem, 6vw, 2.2rem); }
 }
 
 /* ---------- Cards ---------- */
@@ -565,8 +576,8 @@ p  { color: var(--muted); font-size: 1.125rem; line-height: 1.75; }
   display: flex; align-items: center; gap: 16px; width: 100%;
   padding: 0; background: none; cursor: pointer; text-align: left;
 }
-.svc__title-row { display: flex; align-items: center; gap: 10px; }
-.svc__title-row h3 { margin-bottom: 0; }
+.svc__title-row { display: flex; align-items: flex-start; gap: 8px; flex-wrap: wrap; min-width: 0; }
+.svc__title-row h3 { margin-bottom: 0; min-width: 0; word-break: break-word; }
 .svc__short { font-size: 0.95rem; color: var(--muted); font-weight: 400; display: block; margin-top: 3px; }
 .svc__chev { flex-shrink: 0; transition: transform 0.3s; color: var(--muted); }
 .card[data-accordion-item].open .svc__chev { transform: rotate(180deg); }
@@ -585,6 +596,7 @@ p  { color: var(--muted); font-size: 1.125rem; line-height: 1.75; }
   display: inline-block; font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.08em;
   text-transform: uppercase; padding: 3px 9px; border-radius: 4px;
   background: var(--red); color: #fff;
+  flex-shrink: 0; white-space: nowrap; align-self: center;
 }
 
 /* ---------- Team cards ---------- */
@@ -592,7 +604,7 @@ p  { color: var(--muted); font-size: 1.125rem; line-height: 1.75; }
   text-align: center;
   display: flex;
   flex-direction: column;
-  padding: 32px 24px 0;
+  padding: 32px 24px 28px;
 }
 .team-card > p {
   font-size: 0.92rem;
@@ -624,8 +636,11 @@ p  { color: var(--muted); font-size: 1.125rem; line-height: 1.75; }
   font-family: var(--font-mono); font-size: 0.72rem; text-transform: uppercase;
   letter-spacing: 0.1em; color: var(--red); margin-bottom: 14px; line-height: 1.5;
 }
-/* Skill tags — bottom strip */
-.team-tags {
+/* Skill tags removed from UI — hidden */
+.team-tags { display: none !important; }
+.team-tag  { display: none !important; }
+/* (kept for CSS completeness) */
+.team-tags-x {
   display: flex;
   flex-wrap: wrap;
   gap: 5px;
@@ -836,7 +851,7 @@ p  { color: var(--muted); font-size: 1.125rem; line-height: 1.75; }
 
 /* ---------- Market rates table (patents) ---------- */
 .market-table {
-  width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 0.95rem;
+  width: 100%; min-width: 480px; border-collapse: collapse; margin-top: 16px; font-size: 0.88rem;
 }
 .market-table th {
   font-family: var(--font-mono); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em;
