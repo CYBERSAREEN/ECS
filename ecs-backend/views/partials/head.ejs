@@ -15,7 +15,7 @@
   <meta name="keywords" content="cybersecurity, penetration testing, WAPT, web application security, API security testing, vulnerability assessment, red teaming, AI security, LLM security, DevSecOps, secure code review, bug bounty, web development, ecommerce website, Shopify development, startup consultancy, CRM dashboard, Ludhiana, Punjab, India, PenBox DMAS, CyberSage" />
   <meta name="robots" content="<%= (typeof robotsMeta !== 'undefined' && robotsMeta) ? robotsMeta : 'index, follow, max-image-preview:large' %>" />
   <meta name="author" content="Excelon Cyber Solutions" />
-  <meta name="theme-color" content="#f6f7eb" />
+  <meta name="theme-color" content="#1b1f23" />
   <link rel="canonical" href="<%= _canonical %>" />
 
   <!-- Open Graph -->
@@ -49,8 +49,8 @@
         "legalName": "EXCELON CYBER SOLUTIONS PRIVATE LIMITED",
         "url": "<%= _siteUrl %>",
         "logo": "<%= _siteUrl.replace(/\/$/, '') %>/brand/icon-dark-256px.png",
-        "email": "securecybernetics@gmail.com",
-        "founder": { "@type": "Person", "name": "Vedant Sareen", "jobTitle": "Director & CTO" },
+        "email": "exceloncybersolutions@gmail.com",
+        "founder": { "@type": "Person", "name": "Vandana Kochhar", "jobTitle": "Founder, Director & CTO" },
         "address": { "@type": "PostalAddress", "addressLocality": "Ludhiana", "addressRegion": "Punjab", "addressCountry": "IN" },
         "contactPoint": { "@type": "ContactPoint", "telephone": "+91-7087603933", "contactType": "sales", "availableLanguage": ["en", "hi"] },
         "knowsAbout": ["Penetration Testing", "Web Application Security", "AI Security", "Secure Web Development"]
@@ -107,5 +107,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="/css/styles.css?v=<%= assetV %>" />
+  <% if (typeof hideLoader !== 'undefined' && hideLoader) { %>
+  <style>
+    .reveal,.reveal *{opacity:1!important;transform:none!important;transition:none!important;visibility:visible!important;}
+    .hero__type .cursor{display:none;}
+    .stat__num{color:var(--red);}
+  </style>
+  <% } %>
 </head>
 <body>

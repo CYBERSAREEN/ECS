@@ -6,6 +6,7 @@
   <header class="page-header">
     <div class="ph-lines"></div>
     <div class="ph-accent"></div>
+    <div class="ph-accent-2"></div>
     <div class="container-narrow">
       <span class="eyebrow reveal">INTELLECTUAL PROPERTY</span>
       <h1 class="reveal" data-delay="1">Ideas &amp; Patents</h1>
@@ -13,7 +14,7 @@
     </div>
   </header>
 
-  <!-- Patents -->
+  <!-- ═══ Our Patents ══════════════════════════════════════════════ -->
   <section class="section section--alt">
     <div class="container-narrow">
       <div class="section-head reveal" style="text-align:left;max-width:none;margin-bottom:36px;">
@@ -85,22 +86,134 @@
     </div>
   </section>
 
-  <!-- Submit form -->
+  <!-- ═══ Open Innovation — Patent Submission ═══════════════════════ -->
   <section class="section">
-    <div class="container" style="max-width:640px;">
-      <div class="form-card reveal">
-        <span class="eyebrow">OPEN INNOVATION</span>
-        <h2 style="font-size:1.6rem;margin:16px 0 8px;">Have a Novel Idea?</h2>
-        <p style="margin-bottom:24px;">If you believe your idea is patent-worthy, we can help you file it for a minimal cost of ₹500/— including full refinement. <strong style="color:var(--charcoal-2);">You remain the first inventor.</strong></p>
-        <form id="patentForm" novalidate>
-          <div class="field"><label>Your Name *</label><input class="input" name="submitter_name" required /></div>
-          <div class="field"><label>Organization / Designation</label><input class="input" name="organization" /></div>
-          <div class="field"><label>Patent Title *</label><input class="input" name="patent_title" required /></div>
-          <div class="field"><label>Patent Idea (PDF only, max 4 MB)</label><input class="input" type="file" name="file" accept="application/pdf,.pdf" /></div>
-          <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">Submit Patent Idea</button>
-          <p id="patentErr" style="text-align:center;color:#c0392b;font-size:.85rem;margin-top:14px;display:none;"></p>
-          <p id="patentMsg" style="text-align:center;color:var(--red);font-size:.85rem;margin-top:14px;display:none;">Idea received! We&apos;ll review within 48 hours.</p>
-        </form>
+    <div class="container" style="max-width:1100px;">
+
+      <!-- Section intro -->
+      <div class="inno-intro reveal">
+        <div>
+          <span class="eyebrow">OPEN INNOVATION</span>
+          <h2 style="margin:12px 0 16px;">Have a Novel Idea?</h2>
+          <p style="font-size:1.1rem;max-width:580px;">If you believe your idea is patent-worthy, we can help you file it for just <strong style="color:var(--red);font-size:1.2em;">₹899/—</strong> — including full refinement and submission support. <strong style="color:var(--charcoal-2);">You remain the first inventor.</strong></p>
+        </div>
+        <div class="inno-highlights">
+          <div class="ih-card">
+            <span class="ih-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span>
+            <div>
+              <strong>1-Year Validity</strong>
+              <p>Filing is valid for one full year from the date of submission.</p>
+            </div>
+          </div>
+          <div class="ih-card">
+            <span class="ih-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+            <div>
+              <strong>2 Co-Authors</strong>
+              <p>Your name + a Chitkara University faculty collaborator (Vedant Sareen &amp; Dr. Himanshi Babbar).</p>
+            </div>
+          </div>
+          <div class="ih-card">
+            <span class="ih-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+            <div>
+              <strong>You Stay #1</strong>
+              <p>You are always listed as the primary/first inventor. Full IP ownership rights.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Two-column: market rates + form -->
+      <div class="inno-body">
+
+        <!-- LEFT: Market rates -->
+        <div class="reveal">
+          <p style="font-family:var(--font-mono);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--red);margin-bottom:16px;">Market Reference Rates — What Others Pay</p>
+          <div style="overflow-x:auto;">
+            <table class="market-table">
+              <thead>
+                <tr>
+                  <th>Entity Type</th>
+                  <th>Filing Fee</th>
+                  <th>Examination Fee</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Individual / DPIIT-Recognised Startup</td>
+                  <td>₹1,600</td>
+                  <td>₹4,000</td>
+                  <td>₹5,600</td>
+                </tr>
+                <tr>
+                  <td>Small Entity (MSME)</td>
+                  <td>₹4,000</td>
+                  <td>₹10,000</td>
+                  <td>₹14,000</td>
+                </tr>
+                <tr>
+                  <td>Large Entity / Corporate</td>
+                  <td>₹8,000</td>
+                  <td>₹20,000</td>
+                  <td>₹28,000</td>
+                </tr>
+                <tr class="ecs-row">
+                  <td><strong>With Excelon CS</strong></td>
+                  <td colspan="2"><strong>All-inclusive, end-to-end</strong></td>
+                  <td><strong>₹899/—</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="font-size:0.76rem;color:var(--muted-2);margin-top:10px;">Market reference rates — source: <a href="https://ipindia.gov.in" target="_blank" rel="noopener" style="color:var(--red);">ipindia.gov.in</a> &amp; google.com</p>
+
+          <!-- Process steps -->
+          <div style="margin-top:32px;">
+            <p style="font-family:var(--font-mono);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--red);margin-bottom:16px;">How It Works</p>
+            <div class="process-steps">
+              <div class="ps-item">
+                <span class="ps-n">01</span>
+                <div><strong>Submit your idea</strong><p>Fill the form with your patent title and a brief description or PDF.</p></div>
+              </div>
+              <div class="ps-item">
+                <span class="ps-n">02</span>
+                <div><strong>We review &amp; refine</strong><p>Our team reviews your idea within 48 hours and contacts you to refine the claim language.</p></div>
+              </div>
+              <div class="ps-item">
+                <span class="ps-n">03</span>
+                <div><strong>Filing &amp; tracking</strong><p>We file with the Indian Patent Office and keep you updated through approval.</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: Submission form -->
+        <div class="reveal" data-delay="1">
+          <p style="font-family:var(--font-mono);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--red);margin-bottom:20px;">Submit Your Patent Idea</p>
+
+          <form id="patentForm" novalidate>
+            <div class="field"><label>Your Name <span style="color:var(--red);">*</span></label><input class="input" name="submitter_name" required placeholder="Full name" /></div>
+            <div class="field"><label>Organization / Designation</label><input class="input" name="organization" placeholder="Student / Engineer / Founder..." /></div>
+            <div class="field"><label>Patent Title <span style="color:var(--red);">*</span></label><input class="input" name="patent_title" required placeholder="e.g. AI-Based Intrusion Detection System" /></div>
+            <div class="field">
+              <label>Patent Idea Document</label>
+              <p style="font-size:0.8rem;color:var(--muted-2);margin-bottom:8px;">PDF only, max 4 MB. Optional — you can describe your idea in the title instead.</p>
+              <input class="input" type="file" name="file" accept="application/pdf,.pdf" style="padding:9px 14px;" />
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:8px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></svg>
+              Submit Patent Idea
+            </button>
+            <p id="patentErr" style="text-align:center;color:#f87171;font-size:.85rem;margin-top:14px;display:none;"></p>
+          </form>
+
+          <div id="patentDone" style="display:none;padding:32px 24px;background:var(--red-soft);border:1px solid var(--red-mid);border-radius:var(--radius-lg);text-align:center;margin-top:8px;">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="1.5" style="margin:0 auto 12px;display:block;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4 12 14.01l-3-3"/></svg>
+            <h3 style="margin-bottom:8px;">Idea Received!</h3>
+            <p>We&apos;ll review within 48 hours and reach out to discuss next steps.</p>
+          </div>
+        </div>
+
       </div>
     </div>
   </section>
@@ -145,8 +258,80 @@
       errEl.textContent = 'Network error — try again.'; errEl.style.display = 'block'; return;
     }
     f.style.display = 'none';
-    document.getElementById('patentMsg').style.display = 'block';
+    document.getElementById('patentDone').style.display = 'block';
   });
 </script>
+
+<style>
+/* ── Open Innovation section ──────── */
+.inno-intro {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: start;
+  margin-bottom: 56px;
+  padding-bottom: 48px;
+  border-bottom: 1px solid var(--border);
+}
+
+.inno-highlights { display: flex; flex-direction: column; gap: 16px; }
+.ih-card {
+  display: flex;
+  gap: 14px;
+  padding: 16px 18px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: border-color 0.2s;
+}
+.ih-card:hover { border-color: var(--red-mid); }
+.ih-icon {
+  width: 40px; height: 40px;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--red-soft);
+  border: 1px solid var(--red-mid);
+  border-radius: 8px;
+  color: var(--red);
+}
+.ih-icon svg { width: 20px; height: 20px; }
+.ih-card strong { display: block; font-size: 0.95rem; color: var(--charcoal-2); margin-bottom: 3px; }
+.ih-card p { font-size: 0.83rem; color: var(--muted); margin: 0; line-height: 1.6; }
+
+.inno-body {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 60px;
+  align-items: start;
+}
+
+/* Process steps */
+.process-steps { display: flex; flex-direction: column; gap: 0; }
+.ps-item {
+  display: flex;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+}
+.ps-item:last-child { border-bottom: none; }
+.ps-n {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--red);
+  letter-spacing: 0.06em;
+  flex-shrink: 0;
+  padding-top: 3px;
+  min-width: 24px;
+}
+.ps-item strong { display: block; font-size: 0.9rem; color: var(--charcoal-2); margin-bottom: 3px; }
+.ps-item p { font-size: 0.82rem; color: var(--muted); margin: 0; line-height: 1.6; }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .inno-intro { grid-template-columns: 1fr; gap: 32px; }
+  .inno-body { grid-template-columns: 1fr; gap: 40px; }
+}
+</style>
 
 <%- include('partials/footer') %>
