@@ -1,4 +1,7 @@
 const express = require('express');
+const path = require('path');
+const crypto = require('crypto');
+const multer = require('multer');
 const { body, validationResult } = require('express-validator');
 const supabase = require('../config/supabase');
 const { requireAdmin } = require('../middleware/auth');
@@ -13,6 +16,26 @@ const validateMember = [
   body('initials').trim().isLength({ max: 4 }).escape().optional({ nullable: true, checkFalsy: true }),
 ];
 
+// Multer: disk storage for team photos in public/img/team/
+const teamPhotoStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, path.join(__dirname, '../public/img/team'));
+  },
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname || '').toLowerCase() || '.jpg';
+    const safe = ['.jpg', '.jpeg', '.png', '.webp', '.gif'].includes(ext) ? ext : '.jpg';
+    cb(null, `upload-${Date.now()}-${crypto.randomBytes(4).toString('hex')}${safe}`);
+  }
+});
+const teamPhotoUpload = multer({
+  storage: teamPhotoStorage,
+  limits: { fileSize: 5 * 1024 * 1024, files: 1 },
+  fileFilter: (req, file, cb) => {
+    if (/^image\/(jpeg|png|webp|gif)$/.test(file.mimetype)) return cb(null, true);
+    cb(Object.assign(new Error('Images only: JPEG, PNG, WebP, GIF'), { code: 'NOT_IMAGE' }));
+  }
+});
+
 // GET /api/team — public
 router.get('/', async (req, res) => {
   if (!supabase) return res.json([]);
@@ -22,6 +45,22 @@ router.get('/', async (req, res) => {
     .order('sort_order', { ascending: true });
   if (error) { console.error("DB error:", error.message); return res.status(500).json({ error: "Database error" }); }
   return res.json(data);
+});
+
+// POST /api/team/upload-photo — admin: drag-and-drop image upload
+router.post('/upload-photo', requireAdmin, (req, res, next) => {
+  teamPhotoUpload.single('photo')(req, res, (err) => {
+    if (err) {
+      const msg = err.code === 'NOT_IMAGE' ? 'Images only: JPEG, PNG, WebP'
+        : err.code === 'LIMIT_FILE_SIZE' ? 'Image too large (max 5 MB)'
+        : 'Upload error';
+      return res.status(400).json({ error: msg });
+    }
+    next();
+  });
+}, (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+  return res.json({ url: '/img/team/' + req.file.filename });
 });
 
 // POST /api/team — admin

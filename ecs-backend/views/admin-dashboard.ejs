@@ -213,7 +213,7 @@
         { name: 'name', label: 'Name', required: true },
         { name: 'role', label: 'Role', required: true },
         { name: 'bio', label: 'Bio', type: 'textarea' },
-        { name: 'photo_url', label: 'Photo URL (e.g. /img/team/x.jpeg)' },
+        { name: 'photo_url', label: 'Profile Photo', type: 'upload' },
         { name: 'initials', label: 'Initials (fallback avatar)' }
       ]
     },
@@ -260,6 +260,16 @@
           if (f.type === 'textarea') {
             return '<div class="field"><label>' + f.label + '</label><textarea class="textarea" name="' + f.name + '">' + esc(v) + '</textarea></div>';
           }
+          if (f.type === 'upload') {
+            var previewHtml = v ? '<img src="' + esc(v) + '" alt="Current photo" /><p class="upload-fn">' + esc(v) + '</p>' : '';
+            return '<div class="field"><label>' + f.label + '</label>'
+              + '<div class="upload-zone" id="zone-' + f.name + '-' + key + '" data-field="' + f.name + '" data-entity="' + key + '">'
+              + (previewHtml || '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg><span>Drag &amp; drop or click to upload</span><span style="font-size:.76rem;color:var(--muted-2);">JPEG, PNG, WebP — max 5 MB</span>')
+              + '<input type="file" accept="image/jpeg,image/png,image/webp,image/gif" />'
+              + '</div>'
+              + '<input type="hidden" class="input" name="' + f.name + '" value="' + esc(v) + '" />'
+              + '</div>';
+          }
           var t = f.type === 'date' ? 'date' : 'text';
           var dv = (f.type === 'date' && v) ? String(v).slice(0, 10) : v;
           return '<div class="field"><label>' + f.label + '</label><input class="input" type="' + t + '" name="' + f.name + '" value="' + esc(dv) + '" /></div>';
@@ -271,6 +281,37 @@
     box.style.display = 'block';
 
     box.querySelector('[data-cancel]').addEventListener('click', function(){ box.style.display = 'none'; });
+
+    // Wire up upload zones
+    box.querySelectorAll('.upload-zone').forEach(function(zone){
+      var fileInput = zone.querySelector('input[type="file"]');
+      var hiddenInput = box.querySelector('input[name="' + zone.getAttribute('data-field') + '"]');
+      function handleFile(file) {
+        if (!file || !hiddenInput) return;
+        if (file.size > 5 * 1024 * 1024) { alert('Image too large — max 5 MB'); return; }
+        zone.innerHTML = '<span class="uploading">Uploading…</span>';
+        var fd = new FormData(); fd.append('photo', file);
+        fetch('/api/team/upload-photo', { method: 'POST', credentials: 'include', body: fd })
+          .then(function(r){ return r.json(); })
+          .then(function(j){
+            if (j.url) {
+              hiddenInput.value = j.url;
+              zone.innerHTML = '<img src="' + j.url + '" alt="Uploaded photo" /><p class="upload-fn">' + j.url + '</p><input type="file" accept="image/jpeg,image/png,image/webp,image/gif" />';
+              zone.querySelector('input[type="file"]').addEventListener('change', function(){ handleFile(this.files[0]); });
+            } else {
+              zone.innerHTML = '<span style="color:#f87171;font-size:.82rem;">' + (j.error || 'Upload failed') + '</span>';
+            }
+          })
+          .catch(function(){ zone.innerHTML = '<span style="color:#f87171;font-size:.82rem;">Network error</span>'; });
+      }
+      if (fileInput) fileInput.addEventListener('change', function(){ handleFile(this.files[0]); });
+      zone.addEventListener('dragover', function(e){ e.preventDefault(); zone.classList.add('drag-over'); });
+      zone.addEventListener('dragleave', function(){ zone.classList.remove('drag-over'); });
+      zone.addEventListener('drop', function(e){
+        e.preventDefault(); zone.classList.remove('drag-over');
+        handleFile(e.dataTransfer.files[0]);
+      });
+    });
     box.querySelector('[data-save]').addEventListener('click', async function(){
       var body = {};
       cfg.fields.forEach(function(f){

@@ -65,6 +65,7 @@ app.use((req, res, next) => {
   res.locals.gaId = process.env.GA_MEASUREMENT_ID || '';
   res.locals.assetV = require('./package.json').version;
   res.locals.robotsMeta = req.path.startsWith('/vadmin') ? 'noindex, nofollow' : '';
+  res.locals.hideLoader = req.query.__ss === '1';
   next();
 });
 
