@@ -157,32 +157,17 @@
   align-items: start;
 }
 
-/* Info panel */
-.contact-info-panel {}
-.info-card {
-  display: flex;
-  align-items: flex-start;
-  gap: 14px;
-  padding: 14px 0;
-  border-bottom: 1px solid var(--border);
-}
-.info-card:last-of-type { border-bottom: none; }
-.ic {
-  width: 36px; height: 36px;
-  display: flex; align-items: center; justify-content: center;
-  background: var(--red-soft);
-  border: 1px solid var(--red-mid);
-  border-radius: 8px;
-  color: var(--red);
-  flex-shrink: 0;
-}
-.il { font-family: var(--font-mono); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted-2); margin-bottom: 2px; }
-.iv { font-size: 0.88rem; color: var(--charcoal); overflow-wrap: anywhere; word-break: break-all; min-width: 0; }
-.iv:hover { color: var(--red); }
+/* Info panel — card box styling (background/border/icon/label/value colors)
+   comes from the shared ".info-card" rules in styles.css. Only page-specific
+   layout tweaks live here so the two stylesheets don't fight each other. */
+.contact-info-panel { display: flex; flex-direction: column; }
+.info-card { margin-bottom: 14px; }
+.info-card:last-of-type { margin-bottom: 0; }
+.info-card .iv { overflow-wrap: anywhere; word-break: break-word; min-width: 0; }
 
 .contact-wa-cta {
-  margin-top: 20px;
-  padding: 20px 0 0;
+  margin-top: 22px;
+  padding: 22px 24px 0;
   border-top: 1px solid var(--border);
 }
 
