@@ -159,6 +159,25 @@ app.use('/api/edr',      require('./routes/edr'));
 // ── Health check ──────────────────────────────────────────────
 app.get('/healthz', (req, res) => res.json({ status: 'ok', ts: Date.now() }));
 
+// ── Content version ──────────────────────────────────────────
+// Cheap signal pages poll to know "did admin-managed content change since
+// I loaded?" without re-fetching/re-rendering everything client-side.
+// Combines row counts + latest updated_at across admin-editable tables.
+app.get('/api/content-version', async (req, res) => {
+  if (!dbClient) return res.json({ version: 'no-db' });
+  try {
+    const tables = ['services', 'team_members', 'projects', 'patents'];
+    const results = await Promise.all(tables.map(t =>
+      dbClient.from(t).select('updated_at', { count: 'exact', head: false }).order('updated_at', { ascending: false }).limit(1)
+    ));
+    const parts = results.map((r, i) => `${tables[i]}:${r.count || 0}:${(r.data && r.data[0] && r.data[0].updated_at) || ''}`);
+    return res.json({ version: parts.join('|') });
+  } catch (e) {
+    console.error('content-version error:', e.message);
+    return res.json({ version: 'error' });
+  }
+});
+
 // ── SEO: sitemap.xml + robots.txt ─────────────────────────────
 const PUBLIC_PAGES = ['/', '/services', '/projects', '/about', '/ideas', '/contact', '/scan'];
 

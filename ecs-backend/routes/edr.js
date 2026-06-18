@@ -2,9 +2,29 @@ const express = require('express');
 const { body, validationResult } = require('express-validator');
 const supabase = require('../config/supabase');
 const { requireAdmin } = require('../middleware/auth');
+const { buildPublicQuote } = require('../middleware/taunts');
 const edr = require('../services/edr');
 
 const router = express.Router();
+
+// GET /api/edr/recent-public — public: "live attack" banner feed.
+// Deliberately exposes nothing about the actual payload or which rule
+// caught it — just that *something* happened, plus the (fake) IP/MAC, so
+// other visitors see security working without learning what's filtered.
+const PUBLIC_WINDOW_MS = 5 * 60 * 1000;
+router.get('/recent-public', async (req, res) => {
+  if (!supabase) return res.json({ active: false });
+  const since = new Date(Date.now() - PUBLIC_WINDOW_MS).toISOString();
+  const { data, error } = await supabase
+    .from('security_events')
+    .select('ip, fake_mac, created_at')
+    .gte('created_at', since)
+    .order('created_at', { ascending: false })
+    .limit(1);
+  if (error || !data || !data.length) return res.json({ active: false });
+  const evt = data[0];
+  return res.json({ active: true, message: buildPublicQuote(evt.ip), at: evt.created_at });
+});
 
 // GET /api/edr/events — admin: recent detected attack events
 router.get('/events', requireAdmin, async (req, res) => {
@@ -45,16 +65,14 @@ router.post('/unblock', requireAdmin, [body('ip').trim().notEmpty().isLength({ m
   return res.json({ ok: true });
 });
 
-// PATCH /api/edr/events/:id — admin: dismiss/ignore an event without blocking
-router.patch('/events/:id', requireAdmin, [body('status').isIn(['ignored'])], async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+// DELETE /api/edr/events/:id — admin: dismiss/ignore an event — actually
+// removed, not just status-flagged, since "ignored" means "this wasn't
+// worth keeping," not "keep it around in a different state."
+router.delete('/events/:id', requireAdmin, async (req, res) => {
   if (!supabase) return res.status(503).json({ error: 'Database not configured' });
-  const { data, error } = await supabase
-    .from('security_events').update({ status: req.body.status }).eq('id', req.params.id).select().single();
+  const { error } = await supabase.from('security_events').delete().eq('id', req.params.id);
   if (error) { console.error('DB error:', error.message); return res.status(500).json({ error: 'Database error' }); }
-  if (!data) return res.status(404).json({ error: 'Not found' });
-  return res.json(data);
+  return res.status(204).send();
 });
 
 module.exports = router;

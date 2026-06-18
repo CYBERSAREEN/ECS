@@ -1,0 +1,53 @@
+<!-- Live "attack caught" banner — purely a demo of security working, never
+     shows the actual payload or which rule caught it. -->
+<div id="secBanner" style="
+  position: fixed; bottom: 24px; left: 50%; transform: translate(-50%, 120%);
+  max-width: 92vw; width: 460px; background: var(--white); border: 1px solid var(--red);
+  border-radius: 12px; padding: 16px 18px; display: flex; gap: 12px; align-items: flex-start;
+  box-shadow: 0 12px 32px rgba(0,0,0,.35); z-index: 9999; opacity: 0;
+  transition: transform 0.45s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s;">
+  <span style="flex-shrink:0;width:32px;height:32px;border-radius:50%;background:var(--red-soft);display:flex;align-items:center;justify-content:center;">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+  </span>
+  <div style="flex:1;min-width:0;">
+    <div style="font-size:.72rem;font-weight:700;letter-spacing:.04em;color:var(--red);text-transform:uppercase;margin-bottom:4px;">Live Security Alert</div>
+    <div id="secBannerMsg" style="font-size:.86rem;color:var(--charcoal-2);line-height:1.45;"></div>
+  </div>
+  <button id="secBannerClose" aria-label="Dismiss" style="flex-shrink:0;color:var(--charcoal);font-size:1.1rem;line-height:1;padding:2px;">&times;</button>
+</div>
+
+<script>
+(function () {
+  var banner = document.getElementById('secBanner');
+  var msgEl = document.getElementById('secBannerMsg');
+  var closeBtn = document.getElementById('secBannerClose');
+  var lastShownAt = null;
+  var hideTimer = null;
+
+  function show(message) {
+    msgEl.textContent = message;
+    banner.style.transform = 'translate(-50%, 0)';
+    banner.style.opacity = '1';
+    clearTimeout(hideTimer);
+    hideTimer = setTimeout(hide, 12000);
+  }
+  function hide() {
+    banner.style.transform = 'translate(-50%, 120%)';
+    banner.style.opacity = '0';
+  }
+  closeBtn.addEventListener('click', hide);
+
+  async function poll() {
+    try {
+      var res = await fetch('/api/edr/recent-public');
+      var data = await res.json();
+      if (data.active && data.at !== lastShownAt) {
+        lastShownAt = data.at;
+        show(data.message);
+      }
+    } catch (e) {}
+  }
+  poll();
+  setInterval(poll, 20000);
+})();
+</script>

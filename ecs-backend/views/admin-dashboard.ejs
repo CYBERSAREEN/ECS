@@ -110,7 +110,7 @@
   });
   // Load counts (best-effort)
   async function load(url){ try { var r = await fetch(url, { credentials:'include' }); if(!r.ok) return null; return await r.json(); } catch(e){ return null; } }
-  (async function(){
+  async function loadOverview(){
     var s = await load('/api/services'); if(Array.isArray(s)) document.getElementById('svcCount').textContent = s.length;
     var t = await load('/api/team'); if(Array.isArray(t)) document.getElementById('teamCount').textContent = t.length;
     var p = await load('/api/projects'); if(Array.isArray(p)) document.getElementById('projCount').textContent = p.length;
@@ -118,7 +118,8 @@
       if(l.length){ document.getElementById('recentLeads').innerHTML = l.slice(0,5).map(function(x){ return '<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);"><div><div style="color:var(--ink);font-size:.88rem;">'+esc(x.name)+'</div><div style="color:var(--muted-2);font-size:.78rem;">'+esc(x.service_required||'')+' · '+esc(x.email)+'</div></div><span class="status-pill">'+esc(x.status)+'</span></div>'; }).join(''); }
       renderLeads(l);
     }
-  })();
+  }
+  loadOverview();
 
   // ── Leads panel: hot-lead table + one-tap WhatsApp reply ──
   function esc(s){ var d = document.createElement('div'); d.textContent = String(s == null ? '' : s); return d.innerHTML; }
@@ -515,13 +516,35 @@
     });
     tbody.querySelectorAll('[data-ignore]').forEach(function(b){
       b.addEventListener('click', async function(){
-        await fetch('/api/edr/events/' + b.getAttribute('data-ignore'), { method:'PATCH', credentials:'include', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ status:'ignored' }) }).catch(function(){});
+        await fetch('/api/edr/events/' + b.getAttribute('data-ignore'), { method:'DELETE', credentials:'include' }).catch(function(){});
         loadSecurityEvents();
       });
     });
   }
   loadBlocked();
   loadSecurityEvents();
+
+  // ── Live refresh: re-pull whichever panel is on screen, no manual reload
+  // needed. Skips an entity's table while its add/edit form is open so a
+  // background refresh can't clobber what you're mid-typing.
+  function refreshActivePanel() {
+    loadOverview();
+    var activeBtn = document.querySelector('.admin-nav button.active');
+    var activeId = activeBtn ? activeBtn.getAttribute('data-panel') : 'overview';
+    if (['services', 'team', 'projects', 'patents'].indexOf(activeId) !== -1) {
+      var formEl = document.getElementById('form-' + activeId);
+      var formOpen = formEl && formEl.style.display === 'block';
+      if (!formOpen) loadEntity(activeId);
+    } else if (activeId === 'leads') {
+      load('/api/leads').then(function (l) { if (Array.isArray(l)) renderLeads(l); });
+    } else if (activeId === 'submissions') {
+      renderSubmissions();
+    } else if (activeId === 'security') {
+      loadBlocked();
+      loadSecurityEvents();
+    }
+  }
+  setInterval(refreshActivePanel, 15000);
 </script>
 </body>
 </html>

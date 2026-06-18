@@ -1,0 +1,19 @@
+<!-- Auto-reloads the page if admin-managed content changed since it loaded —
+     no manual refresh needed to see new services/team/projects/patents. -->
+<script>
+(function () {
+  var initialVersion = null;
+  async function check() {
+    try {
+      var res = await fetch('/api/content-version');
+      var data = await res.json();
+      if (initialVersion === null) { initialVersion = data.version; return; }
+      if (data.version !== 'error' && data.version !== initialVersion) {
+        location.reload();
+      }
+    } catch (e) {}
+  }
+  check();
+  setInterval(check, 20000);
+})();
+</script>

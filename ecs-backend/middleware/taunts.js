@@ -27,4 +27,24 @@ function buildTaunt(ip) {
   return template.replace('{ip}', ip || 'unknown').replace('{mac}', mac);
 }
 
-module.exports = { buildTaunt, fakeMac };
+// Third-person versions shown to OTHER visitors browsing the site while an
+// attack is being caught in real time — a live "yes, this is actually
+// working" demo, not aimed at the attacker. Deliberately says nothing about
+// what the payload was or which rule caught it (that's exactly the kind of
+// detail you don't hand to whoever's watching the page).
+const PUBLIC_QUOTES = [
+  "Someone's trying to hack us right now — IP {ip}, MAC {mac}. Bold strategy, let's see how it works out for them.",
+  "Live attack in progress from IP {ip} (MAC {mac}). Our team's having a good laugh over here.",
+  "Heads up: we're currently fending off an attack from IP {ip}, MAC {mac}. Honestly? Not their best work.",
+  "Someone at IP {ip} (MAC {mac}) just tried something on us. We caught it before it left the driveway.",
+  "Attack detected from IP {ip}, MAC {mac} — but I doubt their experience matches their enthusiasm.",
+  "Plot twist: IP {ip} (MAC {mac}) picked a cybersecurity company to test their skills on. Bold. Wrong, but bold.",
+];
+
+function buildPublicQuote(ip) {
+  const mac = fakeMac(ip);
+  const template = PUBLIC_QUOTES[Math.floor(Math.random() * PUBLIC_QUOTES.length)];
+  return template.replace('{ip}', ip || 'unknown').replace('{mac}', mac);
+}
+
+module.exports = { buildTaunt, buildPublicQuote, fakeMac };
