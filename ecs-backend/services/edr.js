@@ -20,16 +20,22 @@ function isBlocked(ip) {
   return blockedIPs.has(ip);
 }
 
-// Fire-and-forget — never let logging slow down or fail the response to the
-// (possibly hostile) caller.
-function logEvent({ ip, rule, field, sample, method, path, userAgent }) {
+// Must be awaited by callers, not fire-and-forget: on Vercel (and most
+// serverless runtimes) the function instance can be frozen the instant the
+// HTTP response is flushed, killing any unresolved background promise
+// before it reaches the network. Awaiting adds a few ms of latency to the
+// response but guarantees the event actually lands.
+async function logEvent({ ip, rule, field, sample, method, path, userAgent }) {
   if (!supabase) return;
-  supabase.from('security_events').insert([{
-    ip, fake_mac: fakeMac(ip), rule, field,
-    sample: String(sample || '').slice(0, 300),
-    method, path: String(path || '').slice(0, 300),
-    user_agent: String(userAgent || '').slice(0, 300),
-  }]).then(() => {}, (e) => console.error('[edr] log event failed:', e.message));
+  try {
+    const { error } = await supabase.from('security_events').insert([{
+      ip, fake_mac: fakeMac(ip), rule, field,
+      sample: String(sample || '').slice(0, 300),
+      method, path: String(path || '').slice(0, 300),
+      user_agent: String(userAgent || '').slice(0, 300),
+    }]);
+    if (error) console.error('[edr] log event failed:', error.message);
+  } catch (e) { console.error('[edr] log event failed:', e.message); }
 }
 
 async function blockIP(ip, reason) {

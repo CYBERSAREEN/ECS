@@ -38,7 +38,7 @@ const PER_IP_CONCURRENCY_LIMIT = 10;
 let globalInFlight = 0;
 const perIpInFlight = new Map();
 
-app.use((req, res, next) => {
+app.use(async (req, res, next) => {
   const ip = req.ip;
   const ipCount = perIpInFlight.get(ip) || 0;
 
@@ -47,7 +47,8 @@ app.use((req, res, next) => {
   // Whole-process overload could just be genuine traffic, so that one stays
   // a plain "try again" rather than accusing an innocent visitor.
   if (ipCount >= PER_IP_CONCURRENCY_LIMIT) {
-    edr.logEvent({ ip, rule: 'ddos-flood-per-ip', method: req.method, path: req.originalUrl, userAgent: req.headers['user-agent'] });
+    // Awaited (not fire-and-forget) — see services/edr.js for why.
+    await edr.logEvent({ ip, rule: 'ddos-flood-per-ip', method: req.method, path: req.originalUrl, userAgent: req.headers['user-agent'] });
     res.set('Retry-After', '2');
     return res.status(429).json({ error: buildTaunt(ip) });
   }

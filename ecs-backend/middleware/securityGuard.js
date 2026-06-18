@@ -47,7 +47,7 @@ function isVerifiedAdmin(req) {
   try { return jwt.verify(token, process.env.JWT_SECRET).role === 'admin'; } catch { return false; }
 }
 
-module.exports = function securityGuard(req, res, next) {
+module.exports = async function securityGuard(req, res, next) {
   const findings = [];
   scan(req.body, 'body', findings, 0);
   scan(req.query, 'query', findings, 0);
@@ -73,7 +73,8 @@ module.exports = function securityGuard(req, res, next) {
     return next();
   }
   console.error('[SECURITY ALERT — request blocked]', JSON.stringify(alert));
-  edr.logEvent({
+  // Awaited (not fire-and-forget) — see edr.js for why this matters on Vercel.
+  await edr.logEvent({
     ip: req.ip, rule: findings[0].rule, field: findings[0].field, sample: findings[0].sample,
     method: req.method, path: req.originalUrl, userAgent: req.headers['user-agent'],
   });
