@@ -1,10 +1,13 @@
 // ── Injection guard (defense in depth) ────────────────────────
 // Route validators (express-validator) are the primary gate; this layer
 // catches payloads that bypass client-side validation entirely (Burp/curl),
-// logs a structured SECURITY ALERT, and refuses the request.
+// logs a structured SECURITY ALERT + EDR event, and refuses the request
+// with a taunt instead of a generic error.
 // Patterns map to OWASP Top 10 / PortSwigger attack classes and are chosen
 // to stay quiet on normal prose (CWE-79, CWE-89, CWE-22, CWE-94, CWE-93).
 const jwt = require('jsonwebtoken');
+const { buildTaunt } = require('./taunts');
+const edr = require('../services/edr');
 
 const PATTERNS = [
   { name: 'xss-script-tag',      re: /<\s*(script|iframe|object|embed)[\s>/]/i },
@@ -18,6 +21,11 @@ const PATTERNS = [
   { name: 'crlf-header-inject',  re: /[\r\n](?:to|cc|bcc|content-type|location|set-cookie)\s*:/i },
   { name: 'null-byte',           re: /\x00|%00/ },
   { name: 'cmd-substitution',    re: /\$\((?:[^)]{1,120})\)|`[^`]{1,120}`/ },
+  // Express already URL-decodes query/body once — seeing literal %XX
+  // sequences survive into the parsed value means the payload was encoded
+  // twice (or more), a classic filter-evasion technique (PortSwigger:
+  // "bypassing WAFs via encoding").
+  { name: 'url-encoding-evasion', re: /(?:%[0-9a-f]{2}.*?){3,}/i },
 ];
 
 function scan(value, path, findings, depth) {
@@ -59,11 +67,15 @@ module.exports = function securityGuard(req, res, next) {
   };
 
   // A verified admin may legitimately store security write-ups (PoCs etc.):
-  // log the alert but allow. Everyone else is refused outright.
+  // log the alert but allow. Everyone else is refused outright with a taunt.
   if (isVerifiedAdmin(req)) {
     console.warn('[SECURITY ALERT — allowed for verified admin]', JSON.stringify(alert));
     return next();
   }
   console.error('[SECURITY ALERT — request blocked]', JSON.stringify(alert));
-  return res.status(400).json({ error: 'Request blocked by security policy' });
+  edr.logEvent({
+    ip: req.ip, rule: findings[0].rule, field: findings[0].field, sample: findings[0].sample,
+    method: req.method, path: req.originalUrl, userAgent: req.headers['user-agent'],
+  });
+  return res.status(400).json({ error: buildTaunt(req.ip) });
 };

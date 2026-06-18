@@ -8,6 +8,8 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const rateLimit = require('express-rate-limit');
 const jwt = require('jsonwebtoken');
+const edr = require('./services/edr');
+const { buildTaunt } = require('./middleware/taunts');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -15,6 +17,56 @@ const PORT = process.env.PORT || 3000;
 // Behind Render/Vercel proxy: required so req.ip (and rate limiting) sees the
 // real client IP instead of the proxy's. express-rate-limit v7 errors without it.
 app.set('trust proxy', 1);
+
+// ── Quarantine: admin-blocked IPs are refused before any other work ──
+edr.loadBlockedIPs();
+app.use((req, res, next) => {
+  if (edr.isBlocked(req.ip)) {
+    return res.status(403).json({ error: buildTaunt(req.ip), quarantined: true });
+  }
+  next();
+});
+
+// ── Basic admission control ("manual load balancer" base layer) ──────
+// Single-process concurrency capping: sheds load gracefully under a burst
+// instead of letting unbounded concurrent work degrade the whole process.
+// This is NOT a distributed load balancer (that needs multiple backend
+// instances behind a reverse proxy) — it's the in-process equivalent: a
+// circuit breaker that says "no" once too much is happening at once.
+const GLOBAL_CONCURRENCY_LIMIT = 80;
+const PER_IP_CONCURRENCY_LIMIT = 10;
+let globalInFlight = 0;
+const perIpInFlight = new Map();
+
+app.use((req, res, next) => {
+  const ip = req.ip;
+  const ipCount = perIpInFlight.get(ip) || 0;
+
+  // A single IP holding 10+ concurrent connections is a flood/DDoS-tool
+  // signature, not normal browser behaviour — that gets the taunt treatment.
+  // Whole-process overload could just be genuine traffic, so that one stays
+  // a plain "try again" rather than accusing an innocent visitor.
+  if (ipCount >= PER_IP_CONCURRENCY_LIMIT) {
+    edr.logEvent({ ip, rule: 'ddos-flood-per-ip', method: req.method, path: req.originalUrl, userAgent: req.headers['user-agent'] });
+    res.set('Retry-After', '2');
+    return res.status(429).json({ error: buildTaunt(ip) });
+  }
+  if (globalInFlight >= GLOBAL_CONCURRENCY_LIMIT) {
+    res.set('Retry-After', '2');
+    return res.status(503).json({ error: 'Server is under heavy load — please retry shortly.' });
+  }
+
+  globalInFlight++;
+  perIpInFlight.set(ip, ipCount + 1);
+  const release = () => {
+    globalInFlight = Math.max(0, globalInFlight - 1);
+    const c = (perIpInFlight.get(ip) || 1) - 1;
+    if (c <= 0) perIpInFlight.delete(ip); else perIpInFlight.set(ip, c);
+  };
+  res.on('finish', release);
+  res.on('close', release);
+  next();
+});
 
 // ── View engine (EJS) ─────────────────────────────────────────
 app.set('view engine', 'ejs');
@@ -101,6 +153,7 @@ app.use('/api/team',     require('./routes/team'));
 app.use('/api/projects', require('./routes/projects'));
 app.use('/api/patents',  require('./routes/patents'));
 app.use('/api/scan',     require('./routes/scan'));
+app.use('/api/edr',      require('./routes/edr'));
 
 // ── Health check ──────────────────────────────────────────────
 app.get('/healthz', (req, res) => res.json({ status: 'ok', ts: Date.now() }));
@@ -150,7 +203,36 @@ app.get('/', async (req, res) => {
   res.render('index', { dbServices, dbTeam });
 });
 app.get('/services', async (req, res) => res.render('services', { dbServices: await dbRows('services') }));
-app.get('/projects', (req, res) => res.render('projects'));
+async function dbProjectsWithImages() {
+  if (!dbClient) return [];
+  try {
+    const { data, error } = await dbClient
+      .from('projects')
+      .select('*, project_images(id, image_url, sort_order)')
+      .order('created_at', { ascending: false });
+    if (!error) {
+      return (data || []).map(p => ({
+        ...p,
+        project_images: (p.project_images || [])
+          .sort((a, b) => a.sort_order - b.sort_order)
+          .map(img => ({ ...img, public_url: dbClient.storage.from('project-images').getPublicUrl(img.image_url).data.publicUrl })),
+      }));
+    }
+    // project_images table may not exist yet (migration not applied) — degrade
+    // gracefully so project text content still renders, just without images.
+    console.error('DB read projects (with images):', error.message, '— falling back to projects without images');
+    const { data: plain, error: plainErr } = await dbClient.from('projects').select('*').order('created_at', { ascending: false });
+    if (plainErr) { console.error('DB read projects:', plainErr.message); return []; }
+    return (plain || []).map(p => ({ ...p, project_images: [] }));
+  } catch (e) { console.error('DB read projects:', e.message); return []; }
+}
+
+app.get('/projects', async (req, res) => {
+  const rows = await dbProjectsWithImages();
+  const webProjects = rows.filter(p => p.type === 'web_dev');
+  const securityProjects = rows.filter(p => p.type === 'security');
+  res.render('projects', { webProjects, securityProjects });
+});
 app.get('/about',    async (req, res) => res.render('about', { dbTeam: await dbRows('team_members') }));
 app.get('/ideas',    async (req, res) => {
   const dbPatents = (await dbRows('patents', 'date', false)).filter(p => p.status !== 'Rejected');

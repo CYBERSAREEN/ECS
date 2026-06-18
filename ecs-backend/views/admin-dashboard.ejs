@@ -16,7 +16,8 @@
           { id:'projects', label:'Projects', icon:'<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>' },
           { id:'patents', label:'Patents', icon:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>' },
           { id:'leads', label:'Leads', icon:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>' },
-          { id:'submissions', label:'Idea Submissions', icon:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/>' }
+          { id:'submissions', label:'Idea Submissions', icon:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/>' },
+          { id:'security', label:'Security (EDR)', icon:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/>' }
         ];
         nav.forEach(function(n, i){ %>
         <button class="<%= i===0 ? 'active' : '' %>" data-panel="<%= n.id %>">
@@ -65,6 +66,22 @@
           </div>
         </div>
       <% }); %>
+
+      <!-- Security (EDR) panel -->
+      <div data-panel-content="security" style="display:none;">
+        <div class="table-wrap" style="margin-bottom:24px;">
+          <div class="table-wrap__head"><h3>Blocked IPs</h3></div>
+          <table><thead><tr><th>IP</th><th>Reason</th><th>Blocked At</th><th>Actions</th></tr></thead>
+            <tbody id="rows-blocked"><tr><td colspan="4" style="text-align:center;color:var(--muted-2);padding:32px;">Loading…</td></tr></tbody>
+          </table>
+        </div>
+        <div class="table-wrap">
+          <div class="table-wrap__head"><h3>Detected Attack Events</h3></div>
+          <table><thead><tr><th>IP / MAC (fake)</th><th>Rule</th><th>Path</th><th>Sample</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="rows-security"><tr><td colspan="6" style="text-align:center;color:var(--muted-2);padding:32px;">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -348,6 +365,7 @@
       return '<tr>'
         + cfg.cols.map(function(c){ return '<td style="max-width:340px;">' + esc(row[c] == null ? '-' : String(row[c]).slice(0, 90)) + '</td>'; }).join('')
         + '<td style="white-space:nowrap;">'
+        + (key === 'projects' ? '<button class="btn btn-secondary" data-images="' + esc(row.id) + '" style="padding:6px 12px;font-size:.78rem;margin-right:6px;">Images (' + ((row.project_images || []).length) + ')</button>' : '')
         + '<button class="btn btn-secondary" data-edit="' + esc(row.id) + '" style="padding:6px 12px;font-size:.78rem;margin-right:6px;">Edit</button>'
         + '<button data-del="' + esc(row.id) + '" style="color:#c0392b;font-size:.78rem;font-weight:600;">Delete</button>'
         + '</td></tr>';
@@ -366,12 +384,144 @@
         loadEntity(key);
       });
     });
+    tbody.querySelectorAll('[data-images]').forEach(function(b){
+      b.addEventListener('click', function(){
+        buildImagesPanel(b.getAttribute('data-images'));
+        document.getElementById('form-projects').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+    });
+  }
+
+  // ── Project images: drag-drop add, delete, replace ──
+  function buildImagesPanel(projectId) {
+    var box = document.getElementById('form-projects');
+    box.innerHTML = '<h4 style="margin-bottom:14px;color:var(--navy);">Manage Images</h4>'
+      + '<div id="img-list-' + projectId + '" style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:16px;"><p style="color:var(--muted-2);font-size:.85rem;">Loading…</p></div>'
+      + '<div class="upload-zone" id="img-add-zone" data-project="' + projectId + '">'
+      + '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg><span>Drag &amp; drop or click to add an image</span><span style="font-size:.76rem;color:var(--muted-2);">JPEG, PNG, WebP, GIF — max 5 MB</span>'
+      + '<input type="file" accept="image/jpeg,image/png,image/webp,image/gif" />'
+      + '</div>'
+      + '<div style="margin-top:14px;"><button class="btn btn-secondary" data-cancel style="padding:10px 20px;font-size:.85rem;">Close</button>'
+      + '<span data-err style="color:#c0392b;font-size:.82rem;margin-left:10px;"></span></div>';
+    box.style.display = 'block';
+    box.querySelector('[data-cancel]').addEventListener('click', function(){ box.style.display = 'none'; });
+
+    async function refreshList() {
+      var projects = await load('/api/projects');
+      var proj = Array.isArray(projects) ? projects.find(function(p){ return p.id === projectId; }) : null;
+      var imgs = (proj && proj.project_images) || [];
+      var listEl = document.getElementById('img-list-' + projectId);
+      if (!listEl) return;
+      if (!imgs.length) { listEl.innerHTML = '<p style="color:var(--muted-2);font-size:.85rem;">No images yet.</p>'; return; }
+      listEl.innerHTML = imgs.map(function(img){
+        return '<div style="position:relative;width:120px;height:90px;">'
+          + '<img src="' + esc(img.public_url) + '" style="width:100%;height:100%;object-fit:cover;border-radius:8px;border:1px solid var(--border);" />'
+          + '<button data-img-del="' + esc(img.id) + '" title="Delete" style="position:absolute;top:4px;right:4px;background:#c0392b;color:#fff;border-radius:50%;width:22px;height:22px;line-height:22px;text-align:center;font-size:.78rem;">×</button>'
+          + '<label style="position:absolute;bottom:4px;right:4px;background:rgba(0,0,0,.6);color:#fff;border-radius:6px;padding:2px 6px;font-size:.68rem;cursor:pointer;">Replace<input type="file" accept="image/jpeg,image/png,image/webp,image/gif" data-img-replace="' + esc(img.id) + '" style="display:none;" /></label>'
+          + '</div>';
+      }).join('');
+      listEl.querySelectorAll('[data-img-del]').forEach(function(btn){
+        btn.addEventListener('click', async function(){
+          if (!confirm('Delete this image?')) return;
+          await fetch('/api/projects/' + projectId + '/images/' + btn.getAttribute('data-img-del'), { method: 'DELETE', credentials: 'include' }).catch(function(){});
+          refreshList();
+          loadEntity('projects');
+        });
+      });
+      listEl.querySelectorAll('[data-img-replace]').forEach(function(input){
+        input.addEventListener('change', async function(){
+          if (!this.files[0]) return;
+          var fd = new FormData(); fd.append('image', this.files[0]);
+          var imgId = this.getAttribute('data-img-replace');
+          var r = await fetch('/api/projects/' + projectId + '/images/' + imgId, { method: 'PUT', credentials: 'include', body: fd });
+          if (!r.ok) { var j = await r.json().catch(function(){return {};}); alert(j.error || 'Replace failed'); return; }
+          refreshList();
+        });
+      });
+    }
+    refreshList();
+
+    var zone = document.getElementById('img-add-zone');
+    var fileInput = zone.querySelector('input[type="file"]');
+    function handleAdd(file) {
+      if (!file) return;
+      if (file.size > 5 * 1024 * 1024) { box.querySelector('[data-err]').textContent = 'Image too large — max 5 MB'; return; }
+      var fd = new FormData(); fd.append('image', file);
+      fetch('/api/projects/' + projectId + '/images', { method: 'POST', credentials: 'include', body: fd })
+        .then(function(r){ return r.json().then(function(j){ return { ok: r.ok, j: j }; }); })
+        .then(function(res){
+          if (!res.ok) { box.querySelector('[data-err]').textContent = res.j.error || 'Upload failed'; return; }
+          box.querySelector('[data-err]').textContent = '';
+          refreshList();
+          loadEntity('projects');
+        })
+        .catch(function(){ box.querySelector('[data-err]').textContent = 'Network error'; });
+    }
+    fileInput.addEventListener('change', function(){ handleAdd(this.files[0]); });
+    zone.addEventListener('dragover', function(e){ e.preventDefault(); zone.classList.add('drag-over'); });
+    zone.addEventListener('dragleave', function(){ zone.classList.remove('drag-over'); });
+    zone.addEventListener('drop', function(e){ e.preventDefault(); zone.classList.remove('drag-over'); handleAdd(e.dataTransfer.files[0]); });
   }
 
   document.querySelectorAll('[data-add]').forEach(function(b){
     b.addEventListener('click', function(){ buildForm(b.getAttribute('data-add'), null); });
   });
   ['services','team','projects','patents'].forEach(loadEntity);
+
+  // ── Security (EDR) panel: events + blocked IPs ──
+  async function loadBlocked() {
+    var rows = await load('/api/edr/blocked');
+    var tbody = document.getElementById('rows-blocked');
+    if (!Array.isArray(rows)) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--muted-2);padding:32px;">Could not load.</td></tr>'; return; }
+    if (!rows.length) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--muted-2);padding:32px;">No IPs blocked.</td></tr>'; return; }
+    tbody.innerHTML = rows.map(function(r){
+      return '<tr><td>' + esc(r.ip) + '</td><td>' + esc(r.reason || '-') + '</td><td style="font-size:.8rem;white-space:nowrap;">' + esc(String(r.blocked_at || '').slice(0,16).replace('T',' ')) + '</td>'
+        + '<td><button class="btn btn-secondary" data-unblock="' + esc(r.ip) + '" style="padding:6px 12px;font-size:.78rem;">Unblock</button></td></tr>';
+    }).join('');
+    tbody.querySelectorAll('[data-unblock]').forEach(function(b){
+      b.addEventListener('click', async function(){
+        await fetch('/api/edr/unblock', { method:'POST', credentials:'include', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ ip: b.getAttribute('data-unblock') }) }).catch(function(){});
+        loadBlocked();
+      });
+    });
+  }
+
+  async function loadSecurityEvents() {
+    var rows = await load('/api/edr/events');
+    var tbody = document.getElementById('rows-security');
+    if (!Array.isArray(rows)) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted-2);padding:32px;">Could not load.</td></tr>'; return; }
+    if (!rows.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted-2);padding:32px;">No attack attempts detected yet.</td></tr>'; return; }
+    tbody.innerHTML = rows.map(function(r){
+      var statusColor = r.status === 'blocked' ? '#c0392b' : r.status === 'ignored' ? 'var(--muted-2)' : '#e67e22';
+      var actions = r.status === 'new'
+        ? '<button class="btn btn-primary" data-block="' + esc(r.ip) + '" style="padding:6px 12px;font-size:.76rem;margin-right:6px;">Block</button>'
+          + '<button class="btn btn-secondary" data-ignore="' + esc(r.id) + '" style="padding:6px 12px;font-size:.76rem;">Ignore</button>'
+        : '<span style="color:var(--muted-2);font-size:.78rem;">' + esc(r.status) + '</span>';
+      return '<tr>'
+        + '<td style="font-size:.8rem;">' + esc(r.ip) + '<br><span style="color:var(--muted-2);font-size:.72rem;">' + esc(r.fake_mac || '') + '</span></td>'
+        + '<td style="font-size:.8rem;">' + esc(r.rule) + '</td>'
+        + '<td style="font-size:.78rem;max-width:200px;overflow:hidden;text-overflow:ellipsis;">' + esc(r.method || '') + ' ' + esc(r.path || '') + '</td>'
+        + '<td style="font-size:.76rem;max-width:220px;overflow:hidden;text-overflow:ellipsis;">' + esc(r.sample || '') + '</td>'
+        + '<td style="color:' + statusColor + ';font-weight:600;font-size:.78rem;">' + esc(r.status) + '</td>'
+        + '<td style="white-space:nowrap;">' + actions + '</td>'
+        + '</tr>';
+    }).join('');
+    tbody.querySelectorAll('[data-block]').forEach(function(b){
+      b.addEventListener('click', async function(){
+        if (!confirm('Block IP ' + b.getAttribute('data-block') + '? All future requests from this IP will be refused.')) return;
+        await fetch('/api/edr/block', { method:'POST', credentials:'include', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ ip: b.getAttribute('data-block'), reason: 'Blocked via EDR panel' }) }).catch(function(){});
+        loadSecurityEvents(); loadBlocked();
+      });
+    });
+    tbody.querySelectorAll('[data-ignore]').forEach(function(b){
+      b.addEventListener('click', async function(){
+        await fetch('/api/edr/events/' + b.getAttribute('data-ignore'), { method:'PATCH', credentials:'include', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ status:'ignored' }) }).catch(function(){});
+        loadSecurityEvents();
+      });
+    });
+  }
+  loadBlocked();
+  loadSecurityEvents();
 </script>
 </body>
 </html>

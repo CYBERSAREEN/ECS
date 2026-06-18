@@ -3,6 +3,7 @@ const { body, validationResult } = require('express-validator');
 const rateLimit = require('express-rate-limit');
 const supabase = require('../config/supabase');
 const { requireAdmin } = require('../middleware/auth');
+const { nameField } = require('../middleware/validators');
 
 const router = express.Router();
 
@@ -17,8 +18,8 @@ router.post(
   '/',
   contactLimiter,
   [
-    body('name').trim().notEmpty().isLength({ max: 120 }).escape(),
-    body('email').trim().isEmail().normalizeEmail(),
+    nameField('name'),
+    body('email').trim().isEmail().normalizeEmail().isLength({ max: 254 }),
     // Client's WhatsApp number — digits with country code (e.g. 917087603933)
     body('phone').trim().customSanitizer(v => String(v || '').replace(/[^\d]/g, '')).isLength({ min: 8, max: 15 }).isNumeric(),
     body('organization').trim().isLength({ max: 200 }).escape().optional({ nullable: true, checkFalsy: true }),

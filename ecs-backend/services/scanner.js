@@ -101,13 +101,38 @@ function finding(id, title, severity, status, evidence, remediation) {
   return { id, title, severity, status, evidence, remediation };
 }
 
+/**
+ * Follow redirects manually, re-running the SSRF guard on every hop.
+ * `redirect: 'follow'` alone is NOT safe here: a target could pass the
+ * initial resolvePublic() check on its public hostname, then 302 the
+ * scanner to an internal address (classic SSRF-via-open-redirect /
+ * PortSwigger "bypassing SSRF filters via open redirection"). Each hop's
+ * destination is resolved and validated before it is ever fetched.
+ */
+async function safeFetchFollow(url, opts = {}, maxHops = 5) {
+  let current = url;
+  for (let hop = 0; hop <= maxHops; hop++) {
+    const u = new URL(current);
+    const guard = await resolvePublic(u.hostname);
+    if (!guard.ok) throw new Error(`Redirect to disallowed target refused: ${guard.reason}`);
+
+    const res = await timedFetch(current, { ...opts, redirect: 'manual' });
+    if (res.status >= 300 && res.status < 400 && res.headers.get('location')) {
+      current = new URL(res.headers.get('location'), current).toString();
+      continue;
+    }
+    return res;
+  }
+  throw new Error('Too many redirects');
+}
+
 /* ───────────────────── individual checks ───────────────────── */
 
 async function checkSecurityHeaders(targetUrl) {
   const findings = [];
   let res;
   try {
-    res = await timedFetch(targetUrl, { method: 'GET', redirect: 'follow' });
+    res = await safeFetchFollow(targetUrl, { method: 'GET' });
   } catch (e) {
     return { findings: [finding('reachability', 'Site unreachable during scan', 'info', 'Confirmed', String(e.message), 'Ensure the site is online and not blocking the scanner.')], headersSeen: {} };
   }

@@ -17,11 +17,11 @@ const team = [
     sort_order: 1
   },
   {
-    name: 'Vedant Sareen',
-    role: 'Senior Security Analyst',
-    bio: 'Ex-EY Senior Security Analyst, VAPT specialist, and Red Teamer. Patent holder for PenBox DMAS. Active bug bounty researcher across global programs.',
-    photo_url: '/img/team/vedant.jpeg',
-    initials: 'VS',
+    name: 'Yash Yadav',
+    role: 'Professional Full Stack Developer',
+    bio: 'Full-stack developer with expertise in building websites with AI integration, chatbots, and RAG model integration — adaptive to new technologies, building designs with precision.',
+    photo_url: null,
+    initials: 'YY',
     sort_order: 2
   },
   {

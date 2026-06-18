@@ -1,40 +1,44 @@
 const express = require('express');
-const path = require('path');
 const crypto = require('crypto');
 const multer = require('multer');
 const { body, validationResult } = require('express-validator');
 const supabase = require('../config/supabase');
 const { requireAdmin } = require('../middleware/auth');
+const { nameField } = require('../middleware/validators');
 
 const router = express.Router();
 
+const PHOTO_BUCKET = 'team-photos';
+
 const validateMember = [
-  body('name').trim().notEmpty().isLength({ max: 120 }).escape(),
+  nameField('name'),
   body('role').trim().notEmpty().isLength({ max: 120 }).escape(),
   body('bio').trim().isLength({ max: 1000 }).escape(),
   body('photo_url').trim().custom(v => /^\/[\w\-./]+$/.test(v) || /^https:\/\/[^\s]+$/.test(v)).withMessage('Use a site path (/img/team/x.jpeg) or https URL').optional({ nullable: true, checkFalsy: true }),
   body('initials').trim().isLength({ max: 4 }).escape().optional({ nullable: true, checkFalsy: true }),
 ];
 
-// Multer: disk storage for team photos in public/img/team/
-const teamPhotoStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, '../public/img/team'));
-  },
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname || '').toLowerCase() || '.jpg';
-    const safe = ['.jpg', '.jpeg', '.png', '.webp', '.gif'].includes(ext) ? ext : '.jpg';
-    cb(null, `upload-${Date.now()}-${crypto.randomBytes(4).toString('hex')}${safe}`);
-  }
-});
+// Memory storage + Supabase Storage upload — NOT disk storage. Vercel's
+// filesystem is ephemeral/read-only outside /tmp, so writing into public/
+// at request time silently fails to persist between invocations.
 const teamPhotoUpload = multer({
-  storage: teamPhotoStorage,
+  storage: multer.memoryStorage(),
   limits: { fileSize: 5 * 1024 * 1024, files: 1 },
   fileFilter: (req, file, cb) => {
     if (/^image\/(jpeg|png|webp|gif)$/.test(file.mimetype)) return cb(null, true);
     cb(Object.assign(new Error('Images only: JPEG, PNG, WebP, GIF'), { code: 'NOT_IMAGE' }));
   }
 });
+
+// Defense in depth: verify real file signature, not just client-supplied MIME.
+function sniffImageType(buf) {
+  if (!buf || buf.length < 12) return null;
+  if (buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4e && buf[3] === 0x47) return 'image/png';
+  if (buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff) return 'image/jpeg';
+  if (buf[0] === 0x47 && buf[1] === 0x49 && buf[2] === 0x46 && buf[3] === 0x38) return 'image/gif';
+  if (buf.toString('ascii', 0, 4) === 'RIFF' && buf.toString('ascii', 8, 12) === 'WEBP') return 'image/webp';
+  return null;
+}
 
 // GET /api/team — public
 router.get('/', async (req, res) => {
@@ -58,9 +62,23 @@ router.post('/upload-photo', requireAdmin, (req, res, next) => {
     }
     next();
   });
-}, (req, res) => {
+}, async (req, res) => {
+  if (!supabase) return res.status(503).json({ error: 'Database not configured' });
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
-  return res.json({ url: '/img/team/' + req.file.filename });
+
+  const sniffed = sniffImageType(req.file.buffer);
+  if (!sniffed) return res.status(400).json({ error: 'File content does not match a supported image format' });
+
+  const ext = sniffed.split('/')[1].replace('jpeg', 'jpg');
+  const objectName = `upload-${Date.now()}-${crypto.randomBytes(4).toString('hex')}.${ext}`;
+
+  const { error: upErr } = await supabase.storage
+    .from(PHOTO_BUCKET)
+    .upload(objectName, req.file.buffer, { contentType: sniffed, upsert: false });
+  if (upErr) { console.error('Storage error:', upErr.message); return res.status(500).json({ error: 'File storage error' }); }
+
+  const { data: pub } = supabase.storage.from(PHOTO_BUCKET).getPublicUrl(objectName);
+  return res.json({ url: pub.publicUrl });
 });
 
 // POST /api/team — admin

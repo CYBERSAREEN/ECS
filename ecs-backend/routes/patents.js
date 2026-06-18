@@ -5,6 +5,7 @@ const { body, validationResult } = require('express-validator');
 const rateLimit = require('express-rate-limit');
 const supabase = require('../config/supabase');
 const { requireAdmin } = require('../middleware/auth');
+const { nameField } = require('../middleware/validators');
 
 const router = express.Router();
 
@@ -129,7 +130,7 @@ router.post(
     });
   },
   [
-    body('submitter_name').trim().notEmpty().isLength({ max: 120 }).escape(),
+    nameField('submitter_name'),
     body('organization').trim().isLength({ max: 200 }).escape().optional({ nullable: true, checkFalsy: true }),
     body('patent_title').trim().notEmpty().isLength({ max: 500 }).escape(),
   ],
@@ -145,6 +146,16 @@ router.post(
       // Defense in depth: verify PDF magic bytes, not just extension/MIME.
       if (!req.file.buffer || req.file.buffer.subarray(0, 5).toString() !== '%PDF-') {
         return res.status(400).json({ error: 'File is not a valid PDF' });
+      }
+      // Reject PDFs carrying active content (embedded JS, auto-launch actions,
+      // embedded files) — exactly the "looks like a PDF, actually harms the
+      // machine that opens it" class of attack. A legitimate patent write-up
+      // never needs any of these.
+      const text = req.file.buffer.toString('latin1');
+      const dangerous = [/\/JavaScript\b/, /\/JS\b/, /\/OpenAction\b/, /\/Launch\b/, /\/EmbeddedFile\b/, /\/AA\b/];
+      if (dangerous.some(re => re.test(text))) {
+        console.warn('[SECURITY ALERT] Rejected PDF with active-content markers from', req.ip);
+        return res.status(400).json({ error: 'This PDF contains active content (scripts/auto-actions) and was rejected.' });
       }
       const objectName = `${Date.now()}-${crypto.randomUUID()}.pdf`;
       const { error: upErr } = await supabase.storage
