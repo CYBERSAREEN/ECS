@@ -90,7 +90,16 @@ app.use(helmet({
 }));
 
 // ── CORS (for API; same-origin pages don't need it) ───────────
+// The public site's own origins are always allowed (not secrets). Relying only
+// on env vars meant a missing/misconfigured FRONTEND_URL silently 500'd every
+// browser POST from the live site (contact form) — found in a 2026-09 audit.
+const KNOWN_SITE_ORIGINS = [
+  'https://exceloncybersolutions.co.in',
+  'https://www.exceloncybersolutions.co.in',
+  'https://ecs-teal.vercel.app',
+];
 const allowedOrigins = [
+  ...KNOWN_SITE_ORIGINS,
   ...(process.env.FRONTEND_URL || '').split(',').map(o => o.trim()).filter(Boolean),
   (process.env.SITE_URL || '').replace(/\/$/, ''),
   process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '',
@@ -285,6 +294,8 @@ app.use((req, res) => {
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, _next) => {
   console.error(err.message);
+  // A rejected CORS origin is the client's problem (403), not a server fault (500).
+  if (err.message === 'Not allowed by CORS') return res.status(403).json({ error: 'Origin not allowed' });
   if (req.path.startsWith('/api')) return res.status(500).json({ error: 'Internal server error' });
   res.status(500).send('Internal server error');
 });
