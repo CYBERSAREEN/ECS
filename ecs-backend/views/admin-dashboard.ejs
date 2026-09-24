@@ -47,7 +47,7 @@
             <div class="card stat-card"><span class="card__icon" style="margin:0;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/></svg></span><div><div class="num" id="<%= s[1] %>">—</div><div class="lbl"><%= s[0] %></div></div></div>
           <% }); %>
         </div>
-        <div class="card"><h3 style="margin-bottom:12px;">Recent Leads</h3><div id="recentLeads"><p style="color:var(--muted-2);font-size:.85rem;">Connect Supabase to view live leads.</p></div></div>
+        <div class="card"><h3 style="margin-bottom:12px;">Recent Leads</h3><div id="recentLeads"><p style="color:var(--muted-2);font-size:.85rem;">Loading…</p></div></div>
       </div>
 
       <!-- Other panels -->
@@ -115,7 +115,9 @@
     var t = await load('/api/team'); if(Array.isArray(t)) document.getElementById('teamCount').textContent = t.length;
     var p = await load('/api/projects'); if(Array.isArray(p)) document.getElementById('projCount').textContent = p.length;
     var l = await load('/api/leads'); if(Array.isArray(l)) { document.getElementById('leadCount').textContent = l.length;
-      if(l.length){ document.getElementById('recentLeads').innerHTML = l.slice(0,5).map(function(x){ return '<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);"><div><div style="color:var(--ink);font-size:.88rem;">'+esc(x.name)+'</div><div style="color:var(--muted-2);font-size:.78rem;">'+esc(x.service_required||'')+' · '+esc(x.email)+'</div></div><span class="status-pill">'+esc(x.status)+'</span></div>'; }).join(''); }
+      document.getElementById('recentLeads').innerHTML = l.length
+        ? l.slice(0,5).map(function(x){ return '<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);"><div><div style="color:var(--ink);font-size:.88rem;">'+esc(x.name)+'</div><div style="color:var(--muted-2);font-size:.78rem;">'+esc(x.service_required||'')+' · '+esc(x.email)+'</div></div><span class="status-pill">'+esc(x.status)+'</span></div>'; }).join('')
+        : '<p style="color:var(--muted-2);font-size:.85rem;">No leads yet.</p>';
       renderLeads(l);
     }
   }
